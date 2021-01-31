@@ -1,0 +1,274 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<style>
+    .aw-p-fix{top:0}
+</style>
+<div class="aw-sy aw-padding aw-no-top">
+    <div class="aw-selectLabel-top aw-qanda-top clearfix">
+        <div class="aw-selectLabel-tl" onclick="window.location.href= G_BASE_URL + '/m/search/'" style="width: calc(100% - 50px);">
+            <img src="<?php echo G_STATIC_URL;?>/h5/img/search.png">
+            <input class="aw-pl-ys"  name="q" placeholder="输入你要搜索的内容" disabled/>
+        </div>
+        <a href="javascript:;" class="aw-selectLabel-tr" onclick="$('.aw-common-nav').show();">
+            <i class="icon icon-user" style="font-size: 16px;font-weight: bold;"></i>
+        </a>
+    </div>
+
+    <!--系统钩子-->
+    <?php run_hook('page_content_hook',['page'=>'explore','area'=>'top','platform'=>'mobile']);?>
+    <!--系统钩子-->
+
+    <?php if ($this->content_nav_menu && get_setting('category_enable')=='Y') { ?>
+    <div class="wrapper aw-category-select" id="category">
+        <div class="scroller">
+            <ul class="clearfix">
+                <?php if(get_setting('category_display_mode')=='list'){ ?>
+                <li class="text <?php if(!$_GET['category']){echo 'cur';} ?>" data-id="0">
+                    <a href="javascript:;"><?php _e('全部');?></a>
+                </li>
+                <?php } ?>
+                <?php foreach ($this->content_nav_menu as $key => $val) { ?>
+                <?php if ($val['title']) { ?>
+                <li class="<?php if($_GET['category'] && $_GET['category']==$val['type_id']){echo 'cur';} ?> <?php echo get_setting('category_display_mode')!='list' ? 'image' : 'text'; ?>" data-id="<?php echo $val['type_id'];?>" <?php if($val['type']=='custom'){ ?> onclick="window.location.href = '<?php echo $val['link'];?>';" <?php } ?>>
+                    <?php if(get_setting('category_display_mode')!='list'){ ?>
+                    <img src="<?php if($val['icon']){ echo get_setting('upload_url'); ?>/nav_menu/<?php echo $val['icon']; ?><?php } else { ?><?php echo G_STATIC_URL; ?>/css/<?php echo $this->template_name; ?>/img/default_class_imgs.png<?php } ?>"/>
+                    <?php } ?>
+                    <a href="javascript:;"><?php echo $val['title']; ?></a>
+                </li>
+                <?php } ?>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
+    <?php } ?>
+
+    <!--系统钩子-->
+    <?php run_hook('page_content_hook',['page'=>'explore','area'=>'mid','platform'=>'mobile']);?>
+    <!--系统钩子-->
+
+    <div class="aw-hd-choose <?php if(!$this->user_id) { ?> aw-hd-no-choose <?php } ?>">
+        <ul class="clearfix">
+            <?php if($this->user_id) { ?>
+            <li class="focus"><a href="javascript:;" data-sort="focus"><?php _e('关注');?></a> <i class="iconfont iconxuanze"></i></li>
+            <?php } ?>
+            <li class="cur"><a href="javascript:;" data-sort="new"><?php _e('最新');?></a></li>
+            <li><a href="javascript:;" data-sort="recommend"><?php _e('推荐');?></a></li>
+            <li><a href="javascript:;" data-sort="hot"><?php _e('热门');?></a></li>
+        </ul>
+
+        <?php if($this->user_id) { ?>
+        <div class="aw-explore-focus">
+            <a href="javascript:;" class="cur" data-sort="all"><?php _e('全部');?></a>
+            <a href="javascript:;" data-sort="user"><?php _e('关注的人');?></a>
+            <a href="javascript:;" data-sort="question"><?php _e('关注问题');?></a>
+            <a href="javascript:;" data-sort="column"><?php _e('关注专栏');?></a>
+        </div>
+        <?php } ?>
+    </div>
+
+    <div class="aw-qanda-list" id="ajaxList">
+
+    </div>
+</div>
+
+<!--发起-->
+<div class="aw-common-publish">
+    <a href="javascript:;" class="publish-box rotate-before"><?php _e('+');?></a>
+    <ul class="aw-common-publish-box">
+        <?php if($this->user_id){ ?>
+        <li>
+            <a href="publish/"><i class="iconfont iconxiehuida-xian-lan"></i><?php _e('问题');?></a>
+        </li>
+        <?php if ($this->user_info['permission']['publish_article']) { ?>
+        <li>
+            <a href="publish/article/"><i class="iconfont iconwodewendang"></i> <?php _e('文章');?></a>
+        </li>
+        <?php } ?>
+        <?php }else{ ?>
+        <li>
+            <a href="m/account/login/"><i class="icon icon-user"></i><?php _e('登录');?></a>
+        </li>
+        <li>
+            <a href="m/account/register/"><i class="icon icon-report"></i><?php _e('注册');?></a>
+        </li>
+        <?php } ?>
+        <!--首页自定义拓展发起入口钩子-->
+        <?php run_hook('page_publish_nav_hook',['platform'=>'mobile']);?>
+        <!--首页自定义拓展发起入口钩子-->
+    </ul>
+</div>
+
+<div class="aw-nav">
+    <ul>
+        <li>
+            <a href="m/" class="<?php if ($_GET['c'] == 'main') { ?>aw-active<?php }?>"><i class="iconfont iconshouye"></i><?php _e('发现');?></a>
+        </li>
+        <li>
+            <a href="question/" class="<?php if ($_GET['c'] == 'question') { ?>aw-active<?php }?>"><i class="iconfont iconwenda"></i><?php _e('问答');?></a>
+        </li>
+        <li>
+            <a href="column/" class="<?php if ($_GET['c'] == 'column') { ?>aw-active<?php }?>"><i class="iconfont icondudaozhuanlan"></i><?php _e('专栏');?></a>
+        </li>
+        <li>
+            <a href="topic/" class="<?php if ($_GET['c'] == 'topic') { ?>aw-active<?php }?>"><i class="iconfont iconlabel"></i><?php _e('话题');?></a>
+        </li>
+        <li>
+            <a href="people/<?php echo $this->user_info['uid']; ?>" class="<?php if ($_GET['c'] == 'people') { ?>aw-active<?php }?>"><i class="iconfont iconremenyonghu"></i><?php _e('我的');?></a>
+        </li>
+    </ul>
+</div>
+
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/flexible.js"></script>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/iscroll.js"></script>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/navbarscroll.js"></script>
+
+<script type="text/javascript">
+    var CATEGORY_ID = 0;
+    $('.wrapper').navbarscroll();
+
+    $('#category').navbarscroll({
+        endClickScroll:function(obj)
+        {
+            CATEGORY_ID = obj.attr('data-id');
+            if(G_USER_ID)
+            {
+                $(".aw-hd-choose").find('li').eq(1).find('a').click();
+            }else{
+                $(".aw-hd-choose").find('li').eq(0).find('a').click();
+            }
+        }
+    });
+
+    var url;
+
+    layui.use(['element', 'flow'], function () 
+    {
+        var element = layui.element;
+        var flow = layui.flow;
+        var url = G_BASE_URL + '/explore/ajax/list/post_type-question__sort_type-new__category-' + CATEGORY_ID;
+
+        $('.aw-hd-choose li a').click(function () 
+        {
+            $('.aw-hd-choose li').removeClass('cur');
+            $('.aw-hd-choose a').removeClass('cur');
+            $(this).parent('li').addClass('cur');
+            var sort_type = $(this).attr('data-sort');
+
+            $('.focus').find('a').html('关注');
+
+            switch (sort_type) 
+            {
+                case 'focus':
+                    url = G_BASE_URL + '/m/ajax/get_user_focus/type\-all';
+                    break;
+                case 'new':
+                    url = G_BASE_URL + '/explore/ajax/list/sort_type\-' + sort_type + '__category\-' + CATEGORY_ID;
+                    break;
+                case 'recommend':
+                    url = G_BASE_URL + '/explore/ajax/list/is_recommend\-1__category\-' + CATEGORY_ID;
+                    break;
+                case 'hot':
+                    url = G_BASE_URL + '/explore/ajax/list/sort_type\-' + sort_type + '__category\-' + CATEGORY_ID;
+                    break;
+            }
+
+            $('#ajaxList').empty();
+
+            flow.load({
+                elem: '#ajaxList', //指定列表容器
+                done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                    AWS.ajaxRequest(url, 'get', 'html', {page: page}, function (res) 
+                    {
+                        next(res, page < $($(res)[0]).attr('data-total'));
+                    });
+                }
+            });
+
+            element.init();
+
+            flyLoad();
+        });
+
+        $('.aw-explore-focus a').click(function () 
+        {
+            $('.aw-hd-choose a').removeClass('cur');
+            $(this).addClass('cur');
+
+            $('.aw-hd-choose li').removeClass('cur');
+            $('.focus').addClass('cur');
+
+            var sort_type = $(this).attr('data-sort');
+            var text = $(this).text();
+
+            $('.focus').find('a').html(text);
+            $(".aw-hd-choose .focus").find('i').click();
+
+            switch (sort_type) 
+            {
+                case 'user':
+                    url = G_BASE_URL + '/m/ajax/get_user_focus/type\-user';
+                    break;
+                case 'question':
+                    url = G_BASE_URL + '/m/ajax/get_user_focus/type\-question';
+                    break;
+                case 'column':
+                    url = G_BASE_URL + '/m/ajax/get_user_focus/type\-column';
+                    break;
+                default :
+                    url = G_BASE_URL + '/m/ajax/get_user_focus/type\-all';
+                    break;
+            }
+
+            $('#ajaxList').empty();
+
+            flow.load({
+                elem: '#ajaxList', //指定列表容器
+                done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                    AWS.ajaxRequest(url, 'get', 'html', {page: page}, function (res) 
+                    {
+                        next(res, page < $($(res)[0]).attr('data-total'));
+                    });
+                }
+            });
+
+            element.init();
+
+            flyLoad();
+        });
+    });
+
+    if(G_USER_ID)
+    {
+        $(".aw-hd-choose").find('li').eq(1).find('a').click();
+    }else{
+        $(".aw-hd-choose").find('li').eq(0).find('a').click();
+    }
+
+    $(window).scroll(function()
+    {
+        if ($(document).scrollTop() >= 155) 
+        {
+            $("div.aw-hd-choose").addClass('aw-p-fix');
+        }
+
+        if ($(document).scrollTop() < 155) 
+        {
+            $("div.aw-hd-choose").removeClass('aw-p-fix');
+        }
+    });
+
+    $(".aw-hd-choose .focus").find('i').click(function () 
+    {
+        if($(this).hasClass('iconxuanze'))
+        {
+            $(this).addClass('iconhaofangtuo400iconfontshaixuanzhedieguanbi');
+            $(this).removeClass('iconxuanze');
+        }else{
+            $(this).addClass('iconxuanze');
+            $(this).removeClass('iconhaofangtuo400iconfontshaixuanzhedieguanbi');
+        }
+
+        $('.aw-explore-focus').toggle();
+    });
+
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

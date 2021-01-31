@@ -1,0 +1,128 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+    <div class="aw-top-divl">
+        <a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+    </div>
+    <span><?php $this->article_info['id'] ? _e('修改文章') : _e('发表文章');?></span>
+    <div class="aw-top-div">
+        <?php if(get_setting('draft_enabled')!='N' && !$this->article_info['id']){ ?>
+        <a href="javascript:;" class="aw-top-fb" id="saveDraft" data-type="article" data-item-id="0"><?php _e('保存草稿');?></a>
+         <?php } ?>
+    </div>
+</div>
+<form action="publish/ajax/<?php if ($this->article_info['id']) { ?>modify<?php } else { ?>publish<?php } ?>_article/" method="post" id="publishForm" onsubmit="return false;">
+    <input type="hidden" name="post_hash" value="<?php echo new_post_hash(); ?>"/>
+    <input type="hidden" name="attach_access_key" value="<?php echo $this->attach_access_key; ?>"/>
+    <input type="hidden" name="article_id" id="article_id" value="<?php echo $this->article_info['id']; ?>"/>
+    <input type="hidden" name="logo_img" value="<?php echo $this->article_info['article_img']; ?>"/>
+    <input type="hidden" name="ssid" value="<?php echo $this->ssid;?>" />
+    <input name="category_id" value="<?php echo $this->article_info['category_id'];?>" type="hidden" class="category_id">
+    <input name="column_id" value="<?php echo $this->article_info['column_id'];?>" type="hidden" class="column_id">
+
+    <div class="aw-tzlb" style="margin-bottom: 46px">
+        <div class="aw-fbtz-input aw-fbwt-input">
+            <input type="text" id="question_contents" placeholder="请输入文章标题" class="aw-pl-ys" name="title" value="<?php echo $this->article_info['title'];?>"/>
+        </div>
+
+        <div class="aw-fbwt-xswt" style="height: auto">
+            <div class="aw-editor" >
+                <?php if(get_hook_info('mobile_editor')) { ?>
+                <?php run_hook('mobile_editor',['cat'=>'article','attach_access_key'=>$this->attach_access_key,'name'=>'message','value'=>$this->article_info['message'],'tips'=>'文章详情']);?>
+                <?php } else{?>
+                <textarea class="aw-editor-textarea" name="message" placeholder="请输入文章详情"><?php echo $this->article_info['message'];?></textarea>
+                <?php } ?>
+            </div>
+        </div>
+        <div class="aw-publish-bottom">
+            <div class="publish-item article-img">
+                <label><?php _e('封面');?></label>
+                <div class="info">
+                    <a class="btn btn-mini btn-success" id="logo_uploader" href="javascript:;">
+                        <img src="<?php echo $this->article_info['article_img'] ? $this->article_info['article_img']: G_STATIC_URL.'/css/default/img/default-cover.jpg'; ?>" id="logo_img">
+                    </a>
+                </div>
+            </div>
+
+            <?php if($this->article_category_json) { ?>
+            <div class="publish-item">
+                <label><a href="javascript:;" class="aw-add-category">+ <?php _e('分类');?><i class="iconfont iconxuanze"></i></a></label>
+                <div class="info" id="category_id">
+                    <?php echo $this->article_info['category_id'] ? $this->article_info['category_name'] : '';?>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if(!empty(json_decode($this->column_list,true))) { ?>
+            <div class="publish-item">
+                <label> <a href="javascript:;" class="aw-add-column">+ <?php _e('专栏');?><i class="iconfont iconxuanze"></i></a></label>
+                <div class="info" id="column_id" >
+                    <?php echo $this->article_info['column_id'] ? $this->article_info['column_name'] : '';?>
+                </div>
+            </div>
+            <?php } ?>
+
+            <?php if(!$this->article_info['id']) { ?>
+            <div class="publish-item publish-topic-item" data-type="publish" data-id="0">
+                <label>
+                    <a  href="javascript:;" class="aw-add-topic aw-edit-topic">+ <?php _e('话题');?><i class="iconfont iconxuanze"></i></a>
+                </label>
+                <div class="info" id="select-topic-container"></div>
+            </div>
+            <?php } ?>
+        </div>
+    </div>
+    <div class="aw-publish-fix" id="submitBtn" >
+        <a href="javascript:;" ><?php _e('发表');?></a>
+    </div>
+</form>
+
+<link rel="stylesheet" type="text/css" href="<?php echo G_STATIC_URL; ?>/h5/js/select/css/mobileSelect.css">
+<script src="<?php echo G_STATIC_URL; ?>/h5/js/select/js/mobileSelect.js" type="text/javascript"></script>
+<script>
+    var categoryData = <?php echo $this->article_category_json;?>;
+    var columnData = <?php echo $this->column_list;?>;
+    if(categoryData.length>0){
+        var categorySelect = new MobileSelect({
+            trigger: '.aw-add-category',
+            title: '请选择分类',
+            wheels: [
+                {
+                    data:categoryData
+                }
+            ],
+            position:[0],
+            callback:function(indexArr, data){
+                $('.category_id').val(data[0].id);
+                $('#category_id').text(data[0].value);
+                $('.aw-add-category').html('<a  href="javascript:;" class="aw-add-category">' + _t('+ 分类')+'<i class="iconfont iconxuanze"></i></a>');
+            }
+        });
+    }
+    if(columnData.length>0) {
+        var columnSelect = new MobileSelect({
+            trigger: '.aw-add-column',
+            title: '请选择专栏',
+            wheels: [
+                {
+                    data: columnData
+                }
+            ],
+            position: [0],
+            callback: function (indexArr, data) {
+                $('.column_id').val(data[0].id);
+                $('#column_id').text(data[0].value);
+                $('.aw-add-column').html('<a  href="javascript:;" class="aw-add-category">' + _t('+ 专栏') + '<i class="iconfont iconxuanze"></i></a>');
+            }
+        });
+    };
+    <?php if (get_setting('upload_enable') == 'Y' AND get_setting('advanced_editor_enable' == 'Y')): ?>
+    var logoUpload = new FileUpload('avatar', $('#logo_uploader'), $('#logo_img'), G_BASE_URL + '/publish/ajax/logo_upload/', {
+        tag: 'logo',
+        accept:'image/*'
+    }, function () {
+        $('input[name="logo_img"]').val($('#logo_img').attr('src'));
+    });
+    <?php endif;?>
+</script>
+<?php run_hook('m_publish_page',['page'=>'article','area'=>'footer']);?>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

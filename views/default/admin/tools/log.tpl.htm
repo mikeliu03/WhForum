@@ -1,0 +1,100 @@
+<?php TPL::output('admin/global/header.tpl.htm'); ?>
+<?php TPL::output('admin/global/nav_menu.tpl.htm'); ?>
+<script type="text/javascript" src="<?php echo G_STATIC_URL ?>/js/laydate/laydate.js"></script>
+<div class="aw-content-wrap">
+    <div class="mod">
+        <div class="mod-head">
+            <h3>
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="admin/tools/action_log/"><?php _e('操作记录'); ?></a></li>
+                </ul>
+            </h3>
+        </div>
+        <form class="form-inline" action="admin/tools/action_log/" method="post" style="padding: 15px 10px;background-color: #fff;margin: 5px 0" id="search_form">
+            <table class="table table-striped">
+                <tbody>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label><?php _e('开始时间：');?></label>
+                            <input type="text" name="start_time" class="form-control" id="start_time" value="<?php echo $_GET['start_time'];?>">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label><?php _e('结束时间：');?></label>
+                            <input type="text" name="end_time" class="form-control" id="end_time" value="<?php echo $_GET['end_time'];?>">
+                        </div>
+                    </td>
+                    <td>
+                        <label><?php _e('操作类型：');?></label>
+                        <select name="action_type" class="form-control">
+                            <option value="0" >选择操作类型</option>
+                            <?php foreach($this->actions as $k=>$v){?>
+                            <option value="<?php echo $v['action'];?>" <?php if($_GET['action_type']==$v['action']) { ?> selected <?php } ?>><?php echo $v['action'];?></option>
+                            <?php } ?>
+                        </select>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <a href="javascript:;" onclick="AWS.ajax_post($('#search_form'));" class="btn btn-success">提交筛选</a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+        <div class="mod-body tab-content">
+            <div class="tab-pane active" id="list">
+                <div class="table-responsive">
+                    <form id="batchs_form" action="admin/tools/log_remove/" method="post">
+                        <?php if ($this->lists) { ?>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th><input type="checkbox" class="check-all"></th>
+                                <th><?php _e('记录名称'); ?></th>
+                                <th><?php _e('操作用户'); ?></th>
+                                <th><?php _e('操作ID'); ?></th>
+                                <th><?php _e('记录备注'); ?></th>
+                                <th><?php _e('操作时间'); ?></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($this->lists AS $k=>$v) { ?>
+                            <tr>
+                                <td><input type="checkbox" name="ids[]" value="<?php echo $v['id']; ?>"></td>
+                                <td><?php echo $v['action']; ?></td>
+                                <td><?php echo $v['user_name']; ?></td>
+                                <td><?php echo $v['item_id']; ?></td>
+                                <td><?php echo $v['remark']; ?></td>
+                                <td><?php echo date('Y-m-d H:i',$v['add_time']); ?></td>
+                            </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                        <?php } ?>
+                    </form>
+                </div>
+                <div class="mod-table-foot">
+                    <?php echo $this->pagination; ?>
+                    <a class="btn btn-danger" onclick="AWS.dialog('confirm',{'message': '确定要删除吗？'},function(){
+                        $('.modal-backdrop').hide();
+                        AWS.ajax_post($('#batchs_form'));
+                    });"><?php _e('删除'); ?></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    laydate.render({
+        type: 'datetime',
+        elem: '#start_time', //指定元素
+    });
+    laydate.render({
+        type: 'datetime',
+        elem: '#end_time', //指定元素
+    });
+</script>
+<?php TPL::output('admin/global/footer.tpl.htm'); ?>

@@ -1,0 +1,17 @@
+.aw-project-container-wrap{margin-top: 15px}
+.aw-publish-project{background-color: #fff;padding: 15px 30px}
+.aw-publish-project h1{margin: 15px 0 30px;font-size: 18px;font-weight: bold}
+.aw-publish-project .project-mod{padding: 15px;border-radius: 5px;border: 1px solid #eee;margin-bottom: 30px}
+.aw-publish-project .project-mod .mod-item{overflow: hidden;margin: 10px 0}
+.aw-publish-project .project-mod .project-setting{background-color: #f8f8f8}
+.aw-publish-project .project-mod .mod-item .mod-title{float: left;width: 134px;height: 36px;line-height: 36px}
+.aw-publish-project .project-mod .mod-item .show-block{display: block;margin: 5px 0}
+.aw-publish-project .project-mod .show-block input{display: inline-block}
+.aw-publish-project .project-mod .table-box{border: 1px solid #eee;}
+.aw-publish-project .project-mod .table-box .item{width: calc(25% - 5px);text-align: center;float: left;margin-right: 5px;line-height: 34px;}
+.aw-publish-project .project-mod .table-box .table-head{overflow: hidden;margin-bottom: 10px;background-color: #f8f8f8;height: 34px}
+.aw-publish-project .project-mod .table-box .table-head .item{font-weight: bold}
+.aw-publish-project .project-mod .table-box .table-body .table-content{overflow: hidden;padding: 0 10px;margin-bottom: 10px}
+.aw-publish-project .project-mod .table-box .table-foot{margin: 10px 0}
+.aw-publish-project .project-mod .project-setting{padding: 10px;display: none}
+.aw-publish-project .project-mod .mod-item .mod-content{float: left;width: calc(100% - 134px)}

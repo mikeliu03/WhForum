@@ -1,0 +1,241 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+    <div class="aw-top-divl">
+        <a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+    </div>
+    <span><?php _e('文章详情');?></span>
+    <div class="aw-top-div">
+        <img class="aw-top-more" src="<?php echo G_STATIC_URL;?>/h5/img/more.png">
+    </div>
+</div>
+
+<div class="aw-xsxq">
+    <!--系统钩子-->
+    <?php run_hook('page_content_hook',['page'=>'article_detail','area'=>'top','article_info'=>$this->article_info,'platform'=>'mobile']);?>
+
+    <?php if($this->article_topics) {?>
+    <div class="aw-mod aw-topic-bar" id="question_topic_editor" data-type="article" data-id="<?php echo $this->article_info['id']; ?>">
+        <div class="tag-bar clearfix">
+            <div id="select-topic-container">
+                <?php foreach($this->article_topics as $key => $val) { ?>
+                <span class="aw-topic-item" data-id="<?php echo $val['topic_id']; ?>">
+                    <input type="hidden" name="topics[]" class="topic-input" value="<?php echo $val['topic_title']; ?>"><?php echo $val['topic_title']; ?>
+                </span>
+                <?php } ?>
+            </div>
+            <?php if ($this->user_info['permission']['is_administortar'] OR $this->user_info['permission']['is_moderator']) { ?>
+            <span class="icon-inverse aw-edit-topic"><i class="icon icon-edit"></i></span>
+            <?php } ?>
+        </div>
+    </div>
+    <?php } ?>
+    <h2 class="aw-xsxq-title" style="padding: 20px 10px 6px 10px;">
+        <?php if($this->article_info['set_top'] ) { ?><span class="aw-set-top"><?php _e('顶');?></span><?php } ?>
+        <?php if($this->article_info['is_recommend'] ) { ?><span class="aw-set-recommend"><?php _e('荐');?></span> <?php } ?>
+        <?php echo $this->article_info['title'];?>
+    </h2>
+    <!--系统钩子-->
+    <?php run_hook('page_content_hook',['page'=>'article_detail','area'=>'content_detail_top','article_info'=>$this->article_info,'platform'=>'mobile']);?>
+
+    <!--用户信息-->
+    <div class="aw-xsxq-zz clearfix">
+        <a href="people/<?php echo $this->article_info['user_info']['uid'];?>">
+            <img src="<?php echo get_avatar_url($this->article_info['uid'],'mid');?>">
+        </a>
+        <div class="aw-xsxq-zz-d">
+            <p>
+                <a href="people/<?php echo $this->article_info['user_info']['uid'];?>"><?php echo $this->article_info['user_info']['user_name'];?></a>
+            </p>
+            <span><?php _e('关注');?>:<?php echo $this->article_info['user_info']['friend_count'];?> <?php _e('粉丝');?>:<?php echo $this->article_info['user_info']['fans_count'];?></span>
+        </div>
+        <?php if($this->user_id && $this->user_id != $this->article_info['uid']) { ?>
+        <button type="button" onclick="AWS.User.follow($(this),'user',<?php echo $this->article_info['uid'];?>);" class="<?php echo $this->user_follow_check ? 'disable' : '';?>">
+            <?php $this->user_follow_check ? _e('已关注') : '+ '._e('关注'); ?>
+        </button>
+        <?php } ?>
+    </div>
+
+    <!--文章详情-->
+    <div class="aw-xsxq-article aw-content aw-preview-img">
+        <?php echo $this->article_info['message']; ?>
+    </div>
+
+    <!--系统钩子-->
+    <?php run_hook('page_content_hook',['page'=>'article_detail','area'=>'content_detail_mid','article_info'=>$this->article_info,'platform'=>'mobile']);?>
+
+    <!--文章操作-->
+    <div class="aw-lineo aw-xsxq-cz clearfix">
+        <div class="aw-xsxq-czl clearfix aw-question-footer aw-article-vote">
+            <span onclick="AWS.User.article_vote($(this), <?php echo $this->article_info['id']; ?>,1,1)" class="agree <?php if ($this->article_info['vote_info']['rating'] == 1) { ?> active<?php } ?>">
+                <i class="icon icon-agree"></i> <?php _e('赞');?> <b><?php echo $this->article_info['votes']; ?></b>
+            </span>
+            <span class="against <?php if ($this->article_info['vote_info']['rating'] == -1) { ?> active<?php } ?>" onclick="AWS.User.article_vote($(this), <?php echo $this->article_info['id']; ?>,-1)">
+                <i class="icon icon-disagree"></i> <?php _e('踩');?>
+            </span>
+            <span><i class="iconfont iconliulan-copy"></i><?php echo $this->article_info['views'];?></span>
+            <span><i class="iconfont iconshijian"></i> <?php echo date_friendly($this->article_info['add_time']);?></span>
+        </div>
+        <?php if ($this->article_info['vote_users']) { ?>
+        <br>
+        <div class="aw-article-voter aw-one-line">
+            <?php foreach ($this->article_info['vote_users'] AS $key => $val) { ?>
+            <a href="people/<?php echo $val['uid']; ?>" class="voter" data-toggle="tooltip" data-placement="right" data-original-title="<?php echo $val['user_name']; ?>"><img alt="<?php echo $val['user_name']; ?>" src="<?php echo get_avatar_url($val['uid'], 'mid'); ?>" /></a>
+            <?php } ?>
+        </div>
+        <?php } ?>
+        <!--系统钩子-->
+        <?php run_hook('page_content_hook',['page'=>'article_detail','area'=>'content_detail_bottom','article_info'=>$this->article_info,'platform'=>'mobile']);?>
+    </div>
+
+    <!--文章评论-->
+    <div class="aw-xsxq-hf">
+        <div class="aw-xsxq-hft aw-line clearfix">
+            <b><i class="iconfont iconhaofangtuo400iconfontshaixuanzhedieguanbi"></i><?php _e('全部评论');?><span>(<?php echo $this->article_info['comments'];?>)</span></b>
+        </div>
+        <?php if ($this->comments) { ?>
+        <div class="aw-hide-show" >
+            <?php foreach ($this->comments AS $key => $val) { ?>
+            <div class="aw-xsxq-hfb aw-lineo">
+                <div class="aw-x-h-t clearfix">
+                    <div class="aw-x-h-tl">
+                        <a href="people/<?php echo $val['user_info']['uid']; ?>">
+                            <img src="<?php echo get_avatar_url($val['uid'],'mid'); ?>" alt="<?php echo $val['user_info']['user_name']; ?>" />
+                        </a>
+                        <div class="aw-x-h-tr">
+                            <span>
+                                <a href="people/<?php echo $val['user_info']['uid']; ?>"><?php echo $val['user_info']['user_name']; ?></a>
+                                <?php if ($val['at_user_info']) { ?> <?php _e('评论了'); ?> <a href="people/<?php echo $val['at_user_info']['uid']; ?>"><?php echo $val['at_user_info']['user_name']; ?></a><?php } ?>
+                            </span>
+                            <i><?php echo date_friendly($val['add_time']);?></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="aw-x-h-c aw-content"><?php echo ($val['message']); ?></div>
+                <div class="aw-x-h-dz clearfix">
+                    <div class="aw-xsxq-czl aw-question-footer">
+                        <span onclick="AWS.User.article_comment_vote($(this), <?php echo $val['id']; ?>,<?php $val['vote_info']['rating'] == 1 ?  _e(0):  _e(1);?>)" class="agree <?php if ($val['vote_info']['rating'] == 1) { ?> active<?php } ?>">
+                            <i class="icon icon-agree"></i> <b><?php echo $val['votes']; ?></b>
+                        </span>
+                        <span class="answer-comment-box" onclick="AWS.dialog('articleBox',{article_id:<?php echo $this->article_info['id'];?>,uid:<?php echo $val['uid']; ?>})"><i class="icon icon-comment"></i>  <?php _e('评论');?></span>
+                        <?php if ($this->user_info['permission']['is_administortar'] OR $this->user_info['permission']['is_moderator'] OR ($this->user_id == $this->article_info['uid'] && get_setting('user_remove_content_enable')=='Y')) { ?>
+                        <span onclick="AWS.confirm('确认删除评论？',G_BASE_URL+'/article/ajax/remove_comment/',{comment_id:<?php echo $val['id']; ?>})"><i class="iconfont iconshanchu-xian"></i>  <?php _e('删除');?></span>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+            <?php } ?>
+        </div>
+        <?php } ?>
+    </div>
+
+    <?php if($this->recommend_posts) {?>
+    <div class="aw-xsxq-hf">
+        <div class="aw-xsxq-hft aw-line clearfix">
+            <b><i class="iconfont iconhaofangtuo400iconfontshaixuanzhedieguanbi"></i><?php _e('相关推荐');?><span>(<?php echo sizeof($this->recommend_posts);?>)</span></b>
+        </div>
+        <div class="aw-hide-show" >
+            <ul class="aw-recommend_posts">
+                <?php foreach($this->recommend_posts AS $key => $val) { ?>
+                <li>
+                    <?php if ($val['question_id']) { ?>
+                    <a href="question/<?php echo $val['question_id']; ?>" class="aw-two-line">
+                        <span class="aw-tag aw-background-blue">问</span> <?php echo $val['question_content']; ?>
+                    </a>
+                    <?php } else { ?>
+                    <a href="article/<?php echo $val['id']; ?>" class="aw-two-line">
+                        <span class="aw-tag aw-background-yellow">文</span> <?php echo $val['title']; ?>
+                    </a>
+                    <?php } ?>
+                </li>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
+    <?php } ?>
+</div>
+<?php if(!$this->user_id) {?>
+<div class="aw-no-login">
+    <a href="m/account/login/"><?php _e('登录');?></a>
+    <a href="m/account/register/"><?php _e('注册');?></a>
+</div>
+<?php } ?>
+<div class="aw-article-bottom-btn">
+    <span class="answer-comment-box" <?php if($this->user_id) { ?> onclick="AWS.dialog('articleBox',{article_id:<?php echo $this->article_info['id'];?>})" <?php } ?>><i class="icon icon-comment"></i>  <?php _e('评论');?></span>
+    <span onclick="AWS.User.article_vote($(this), <?php echo $this->article_info['id']; ?>,1,2)" class="agree <?php if ($this->article_info['vote_info']['rating'] == 1) { ?> active<?php } ?>">
+    <i class="icon icon-agree"></i> <?php _e('赞');?> <b><?php echo $this->article_info['votes']; ?></b>
+    </span>
+</div>
+
+<!--文章操作-->
+<div class="aw-toast aw-top-toast" style="display: none">
+    <div class="aw-toast-hf aw-top-more-toast">
+        <?php if($this->user_id) { ?>
+        <?php if (($this->user_info['permission']['is_administortar'] OR $this->user_info['permission']['is_moderator']) OR ($this->user_id == $this->article_info['uid'] && get_setting('user_remove_content_enable')=='Y')) { ?>
+        <dl onclick="AWS.confirm('确认删除该茶知识?',G_BASE_URL + '/article/ajax/remove_article/','article_id=<?php echo $this->article_info['id']; ?>')">
+            <dt><i class="iconfont iconshanchu-xian"></i></dt>
+            <dd>
+                <a href="javascript:;"><?php _e('删除'); ?></a>
+            </dd>
+        </dl>
+        <?php } ?>
+        <?php if ((!$this->article_info['lock'] AND ($this->article_info['uid'] == $this->user_id OR $this->user_info['permission']['edit_article'])) OR $this->user_info['permission']['is_administortar'] OR $this->user_info['permission']['is_moderator']) { ?>
+        <dl onclick="window.location.href = G_BASE_URL + '/publish/article/<?php echo $this->article_info['id']; ?>'">
+            <dt><i class="iconfont iconbianji-x1"></i></dt>
+            <dd><a href="javascript:;"><?php _e('编辑');?></a></dd>
+        </dl>
+        <?php } ?>
+
+        <?php if ($this->user_info['permission']['is_administortar'] OR $this->user_info['permission']['is_moderator']) { ?>
+
+        <dl onclick="AWS.ajax_request(G_BASE_URL + '/article/ajax/lock/', 'article_id=<?php echo $this->article_info['id']; ?>');">
+            <dt><i class="icon icon-lock"></i></dt>
+            <dd>
+                <a href="javascript:;"><?php if ($this->article_info['lock']) { ?><?php _e('解除锁定'); ?><?php } else { ?><?php _e('锁定'); ?><?php } ?></a>
+            </dd>
+        </dl>
+
+        <dl onclick="AWS.confirm('<?php $this->article_info['set_top'] ? _e('取消置顶?') : _e('确认置顶?'); ?>',G_BASE_URL + '/article/ajax/set_top_article/', 'action=<?php if ($this->article_info['set_top']) { ?>un<?php } ?>set&article_id=<?php echo $this->article_info['id']; ?>');">
+            <dt><i class="iconfont iconzhiding"></i></dt>
+            <dd>
+                <a href="javascript:;"><?php $this->article_info['set_top'] ?  _e('取消置顶') :  _e('置顶'); ?></a>
+            </dd>
+        </dl>
+
+        <dl onclick="AWS.confirm('确认<?php $this->article_info['is_recommend'] ?  _e('取消推荐'): _e('推荐'); ?>',G_BASE_URL + '/article/ajax/set_recommend/', 'action=<?php if ($this->article_info['is_recommend']) { ?>un<?php } ?>set&article_id=<?php echo $this->article_info['id']; ?>');">
+            <dt><i class="iconfont icontuijian"></i></dt>
+            <dd>
+                <a href="javascript:;"><?php $this->article_info['is_recommend'] ?  _e('取消推荐'): _e('推荐'); ?></a>
+            </dd>
+        </dl>
+        <?php } ?>
+
+        <dl onclick="AWS.dialog('report', {item_type:'question', item_id:<?php echo $this->article_info['id']; ?>,item_reson:'<?php echo get_setting('report_reason');?>'})">
+            <dt><i class="icon icon-report"></i></dt>
+            <dd>
+                <a href="javascript:;"><?php _e('举报'); ?></a>
+            </dd>
+        </dl>
+        <?php } ?>
+        <dl onclick="$('.aw-toast-share').toggle();">
+            <dt><i class="icon icon-share"></i></dt>
+            <dd><a href="javascript:;"><?php _e('分享'); ?></a></dd>
+        </dl>
+    </div>
+    <div class="aw-bg"></div>
+</div>
+
+<script type="text/javascript">
+    $('.aw-xsxq-hft b').click(function ()
+    {
+        $(this).parents('.aw-xsxq-hf').find('.aw-hide-show').toggle();
+        if($(this).parents('.aw-xsxq-hf').find('.aw-hide-show').is(':hidden'))
+        {
+            $(this).find('i').removeClass('iconhaofangtuo400iconfontshaixuanzhedieguanbi');
+            $(this).find('i').addClass('iconxuanze');
+        }else{
+            $(this).find('i').removeClass('iconxuanze');
+            $(this).find('i').addClass('iconhaofangtuo400iconfontshaixuanzhedieguanbi');
+        }
+    });
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

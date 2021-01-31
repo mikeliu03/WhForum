@@ -1,0 +1,65 @@
+<?php TPL::output('admin/global/header.tpl.htm'); ?>
+<?php TPL::output('admin/global/nav_menu.tpl.htm'); ?>
+
+<div class="aw-content-wrap">
+	<form action="admin/hook/save/" id="settings_form" method="post" onsubmit="return false">
+	<input type="hidden" name="id" value="<?php echo $this->info['id']; ?>" />
+	<div class="mod">
+		<div class="mod-head">
+			<h3>
+				<ul class="nav nav-tabs">
+					<li><a href="admin/hook/"><?php _e('钩子管理'); ?></a></li>
+					<li class="active"><a href="javascript:;"><?php $this->info ? _e('编辑钩子') :_e('新建钩子'); ?></a></li>
+				</ul>
+			</h3>
+		</div>
+
+		<div class="tab-content mod-content">
+			<table class="table table-striped">
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php _e('钩子名称'); ?>:</span>
+							<div class="col-sm-4 col-xs-8">
+								<input type="text" name="name" class="form-control" value="<?php echo $this->info['name']; ?>">
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php _e('钩子介绍'); ?>:</span>
+							<div class="col-sm-4 col-xs-8">
+								<textarea class="form-control" name="intro" rows="4"><?php echo $this->info['intro']; ?></textarea>
+							</div>
+						</div>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php _e('是否启用'); ?>:</span>
+							<div class="col-sm-4 col-xs-8">
+								<input type="radio" value="0" <?php echo $this->info['status']==0 ? 'checked': '';?> name="status"/>&nbsp;否 &nbsp;&nbsp;&nbsp;
+								<input type="radio" value="1" <?php echo $this->info['status']==1 ? 'checked': '';?> name="status"/>&nbsp;是
+							</div>
+						</div>
+					</td>
+				</tr>
+
+				<tfoot>
+				<tr>
+					<td>
+						<input type="button" value="<?php _e('保存设置'); ?>" class="btn btn-primary center-block" onclick="AWS.ajax_post($('#settings_form'));" />
+					</td>
+				</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+	</form>
+</div>
+
+<?php TPL::output('admin/global/footer.tpl.htm'); ?>

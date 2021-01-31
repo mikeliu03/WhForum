@@ -1,0 +1,12 @@
+<?php if ($this->log) { ?>
+<?php foreach ($this->log AS $key => $val) { ?>
+<tr>
+	<td><?php echo date_friendly($val['time'], 604800, 'Y-m-d'); ?></td>
+	<td><?php echo $val['type']; ?></td>
+	<td><font color="blue">待审核</font></td>
+	<td><?php echo cjk_substr(checkStrHtml($val['remarks']), 0, 30 , 'UTF-8', '...') ?></td>
+</tr>
+<?php } ?>
+<input type="hidden" class="ajax_result<?php echo $this->page;?>" value="<?php echo count($this->log);?>">
+<input type="hidden" class="per_page" value="<?php echo $this->per_page;?>">
+<?php } ?>

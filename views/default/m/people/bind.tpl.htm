@@ -1,0 +1,124 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+	<div class="aw-top-divl">
+		<a href="javascript:;" onclick="window.history.back(-1);">
+			<img class="aw-top-back" src="<?php echo G_STATIC_URL;?>/h5/img/back.png">
+		</a>
+	</div>
+	<span ><?php _e('账号绑定');?></span>
+	<div class="aw-top-div">
+		<a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+	</div>
+</div>
+<div class="aw-yqhd aw-zhsz">
+	<div class="aw-my-list">
+		<form action="account/ajax/profile_setting/" method="post" id="setting-account">
+			<?php if (get_setting('weixin_app_id')) { ?>
+			<div class="bind-form-item">
+				<label><?php _e('微信');?></label>
+				<span>
+					<?php if ($this->weixin) { ?>
+					<?php echo $this->weixin['nickname']; ?>
+					<?php } else { ?>
+					<?php _e('微信未绑定'); ?>
+					<?php } ?>
+				</span>
+				<?php if ($this->weixin) { ?>
+				<a href="javascript:;" onclick="AWS.ajax_request(G_BASE_URL + '/account/ajax/unbinding_weixin/');" class="unbind-btn"><?php _e('取消绑定'); ?></a>
+				<?php } else { ?>
+				<a onclick="AWS.dialog('请关注公众帐号进行绑定操作');" href="javascript:;" class="bind-btn"><?php _e('绑定'); ?></a>
+				<?php } ?>
+			</div>
+			<?php } ?>
+			<?php if (get_setting('qq_login_enabled') == 'Y') { ?>
+			<div class="bind-form-item">
+				<label><?php _e('QQ');?></label>
+				<span>
+					<?php if ($this->qq) { ?>
+					<?php echo $this->qq['nickname']; ?>
+					<?php }  else { ?>
+					<?php _e('QQ账号未绑定') ;?>
+					<?php } ?>
+				</span>
+				<?php if ($this->qq) { ?>
+				<a href="account/openid/qq/unbind/" class="unbind-btn"><?php _e('解绑'); ?></a>
+				<?php } else { ?>
+				<a href="account/openid/qq/bind/" class="bind-btn"><?php _e('绑定'); ?></a>
+				<?php } ?>
+			</div>
+			<?php } ?>
+			<?php if (get_setting('sina_weibo_enabled') == 'Y') { ?>
+			<div class="bind-form-item">
+				<label><?php _e('微博');?></label>
+				<span>
+					<?php if ($this->sina_weibo) { ?>
+					<a href="http://weibo.com/<?php echo $this->sina_weibo['id']; ?>" target="_blank"><?php echo $this->sina_weibo['name']; ?></a>
+					<?php } else { ?>
+					<?php _e('微博未绑定'); ?>
+					<?php } ?>
+				</span>
+				<?php if ($this->sina_weibo) { ?>
+				<a href="account/openid/weibo/unbind/" class="unbind-btn"><?php _e('取消绑定'); ?></a>
+				<?php } else { ?>
+				<a href="account/openid/weibo/bind/" class="bind-btn"><?php _e('绑定'); ?></a>
+				<?php } ?>
+			</div>
+			<?php } ?>
+
+			<?php if (get_setting('google_login_enabled') == 'Y') { ?>
+			<div class="bind-form-item">
+				<label><?php _e('Google');?></label>
+				<span>
+					<?php if ($this->google) { ?>
+					<a href="<?php echo $this->google['link']; ?>" target="_blank"><?php echo $this->google['name']; ?></a>
+					<?php } else { ?>
+					Google未绑定
+					<?php } ?>
+				</span>
+				<?php if ($this->google) { ?>
+				<a href="account/openid/google/unbind/" class="unbind-btn"><?php _e('取消绑定'); ?></a>
+				<?php } else { ?>
+				<a href="account/openid/google/bind/" class="bind-btn"><?php _e('绑定'); ?></a>
+				<?php } ?>
+			</div>
+			<?php } ?>
+
+			<?php if (get_setting('facebook_login_enabled') == 'Y') { ?>
+			<div class="bind-form-item">
+				<label><?php _e('Facebook');?></label>
+				<span>
+					<?php if ($this->facebook) { ?>
+					<a href="<?php echo $this->facebook['link']; ?>" target="_blank"><?php echo $this->facebook['name']; ?></a>
+					<?php } else { ?>
+					Facebook未绑定
+					<?php } ?>
+				</span>
+				<?php if ($this->facebook) { ?>
+				<a href="account/openid/facebook/unbind/" class="unbind-btn"><?php _e('取消绑定'); ?></a>
+				<?php } else { ?>
+				<a href="account/openid/facebook/bind/" class="bind-btn"><?php _e('绑定'); ?></a>
+				<?php } ?>
+			</div>
+			<?php } ?>
+
+			<?php if (get_setting('twitter_login_enabled') == 'Y') { ?>
+			<div class="bind-form-item">
+				<label><?php _e('Facebook');?></label>
+				<span>
+					<?php if ($this->twitter) { ?>
+					<a href="https://twitter.com/<?php echo $this->twitter['screen_name']; ?>" target="_blank"><?php echo $this->twitter['name']; ?></a>
+					<?php } else { ?>
+					Twitter未绑定
+					<?php } ?>
+				</span>
+				<?php if ($this->twitter) { ?>
+				<a href="account/openid/twitter/unbind/" class="unbind-btn"><?php _e('取消绑定'); ?></a>
+				<?php } else { ?>
+				<a href="account/openid/twitter/bind/" class="bind-btn"><?php _e('绑定'); ?></a>
+				<?php } ?>
+			</div>
+			<?php } ?>
+		</form>
+	</div>
+</div>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

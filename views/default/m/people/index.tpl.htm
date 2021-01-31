@@ -1,0 +1,117 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-my aw-no-top">
+	<div class="aw-my-top">
+		<div class="aw-my-tt clearfix">
+			<div class="aw-my-tt-r">
+				<a href="notifications/" class="aw-my-tt-rtx">
+					<span class="iconfont iconxiaoxi"></span>
+					<?php if($this->user_info['notification_unread']+$this->user_info['inbox_unread']) { ?>
+					<i><?php echo $this->user_info['notification_unread']+ $this->user_info['inbox_unread'];?></i>
+					<?php } ?>
+				</a>
+				<a href="m/people/setting/" class="aw-my-tt-rsz"><span class="iconfont iconshezhi"></span> </a>
+			</div>
+		</div>
+		<div class="aw-my-tc clearfix">
+			<img class="aw-my-tcl" onclick="window.location.href= G_BASE_URL+'/m/people/profile/';" src="<?php echo get_avatar_url($this->user_id,'mid');?>">
+			<div class="aw-my-tcr">
+				<b>
+					<?php echo $this->user_info['user_name'];?>
+					<?php if ($this->user['verified']) { ?>
+					<i class="icon-v<?php if ($this->user['verified'] == 'enterprise') { ?> i-ve<?php } ?>" title="<?php if ($this->user['verified'] == 'enterprise') { ?>企业认证<?php } else { ?>个人认证<?php } ?>"></i>
+					<?php } ?>
+				</b>
+				<p class="aw-one-line"><?php echo $this->user_info['signature'] ? $this->user_info['signature'] : '这个家伙太懒，什么都没有留下';?> <a href="m/people/setting/" style="color: #fff"><i class="iconfont iconxiehuida-xian-lan"></i></a>  </p>
+				<div class="extends-info">
+					<span><?php _e('威望:'.$this->user_info['reputation']);?></span>
+					<?php if(get_hook_config('consult')['consult_plugin_enable']['value'] == 'Y' && get_setting('consult_plugin_enable') == 'Y'){ ?>
+					<?php if($this->user['consult_price']>0){ ?>
+					<span><?php _e('咨询价格'); ?> : <?php echo $this->user['consult_price']?$this->user['consult_price']:0; ?> 元/次</span>
+					<?php } ?>
+					<?php } ?>
+				</div>
+			</div>
+		</div>
+		<div class="aw-my-tb">
+			<ul class="clearfix">
+				<li>
+					<a href="m/home/integral/">
+						<i><?php echo num2tring($this->user_info['integral']);?></i>
+						<span><?php echo get_setting('integral_unit');?></span>
+					</a>
+				</li>
+				<li>
+					<a href="m/home/">
+						<i><?php echo $this->user_info['answer_count'];?></i>
+						<span><?php _e('回答');?></span>
+					</a>
+				</li>
+				<li>
+					<a href="m/people/fans/">
+						<i><?php echo $this->user_info['fans_count'];?></i>
+						<span><?php _e('粉丝');?></span>
+					</a>
+				</li>
+				<li>
+					<a href="m/home/focus/">
+						<i><?php echo $this->user_info['friend_count'];?></i>
+						<span><?php _e('关注');?></span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="aw-my-list">
+		<ul>
+			<li>
+				<a href="home/" class="clearfix">
+					<span><?php _e('我参与的');?></span>
+					<img src="<?php echo G_STATIC_URL;?>/h5/img/gd.png">
+				</a>
+			</li>
+			<li>
+				<a href="m/home/draft/" class="clearfix">
+					<span>
+						<?php _e('我的草稿');?>
+						<?php if( $this->user_info['draft_count']){?><i><?php echo $this->user_info['draft_count'];?></i><?php } ?>
+					</span>
+					<img src="<?php echo G_STATIC_URL;?>/h5/img/gd.png">
+				</a>
+			</li>
+			<li>
+				<a href="m/home/favorite/" class="clearfix">
+					<span>
+						<?php _e('我的收藏');?>
+					</span>
+					<img src="<?php echo G_STATIC_URL;?>/h5/img/gd.png">
+				</a>
+			</li>
+			<li>
+				<a href="m/home/focus/" class="clearfix">
+					<span> <?php _e('我的关注');?></span>
+					<img src="<?php echo G_STATIC_URL;?>/h5/img/gd.png">
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>
+<div class="aw-nav">
+	<ul>
+		<li>
+			<a href="m/" class="<?php if ($_GET['c'] == 'main') { ?>aw-active<?php }?>"><i class="iconfont iconshouye"></i><?php _e('发现');?></a>
+		</li>
+		<li>
+			<a href="question/" class="<?php if ($_GET['c'] == 'question') { ?>aw-active<?php }?>"><i class="iconfont iconwenda"></i><?php _e('问答');?></a>
+		</li>
+		<li>
+			<a href="column/" class="<?php if ($_GET['c'] == 'column') { ?>aw-active<?php }?>"><i class="iconfont icondudaozhuanlan"></i><?php _e('专栏');?></a>
+		</li>
+		<li>
+			<a href="topic/" class="<?php if ($_GET['c'] == 'topic') { ?>aw-active<?php }?>"><i class="iconfont iconlabel"></i><?php _e('话题');?></a>
+		</li>
+		<li>
+			<a href="people/<?php echo $this->user_info['uid']; ?>" class="<?php if ($_GET['c'] == 'people') { ?>aw-active<?php }?>"><i class="iconfont iconremenyonghu"></i><?php _e('我的');?></a>
+		</li>
+	</ul>
+</div>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

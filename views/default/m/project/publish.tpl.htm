@@ -1,0 +1,135 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+    <div class="aw-top-divl">
+        <a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+    </div>
+    <span><?php !$this->project_info['id'] ?  _e('发起活动') :  _e('修改活动');?></span>
+</div>
+<form action="project/ajax/<?php if ($this->project_info['id']) { ?>update<?php } else { ?>publish<?php } ?>_project/" id="publishForm" method="post" onsubmit="return false;">
+    <input type="hidden" name="project_id" value="<?php echo $this->project_info['id']; ?>" />
+    <input type="hidden" name="post_hash" value="<?php echo new_post_hash(); ?>" />
+    <input type="hidden" name="attach_access_key" value="<?php echo $this->attach_access_key; ?>" />
+    <input type="hidden" name="project_type" id="projectPost" value="<?php if ($this->project_info['project_type']) { echo $this->project_info['project_type']; } else { ?>DEFAULT<?php } ?>">
+    <input type="hidden"  name="contact[name]" id="project_name" value="" />
+    <input type="hidden"  name="contact[mobile]" id="project_mobile" value="" />
+    <input type="hidden"  name="contact[qq]" id="project_qq" value="" />
+    <div class="aw-tzlb" style="margin-bottom: 46px">
+        <div class="aw-fbtz-input aw-fbwt-input">
+            <input type="text" placeholder="请输入活动名称" class="aw-pl-ys" name="title" value="<?php echo $this->project_info['title'];?>"/>
+        </div>
+        <div class="aw-fbwt-xswt" style="height: auto">
+            <div class="aw-editor" >
+                <?php run_hook('mobile_editor',['cat'=>'question','attach_access_key'=>$this->attach_access_key,'name'=>'question_detail','value'=>$this->project_info['question_detail'],'tips'=>'问题详细补充（选填）']);?>
+            </div>
+        </div>
+
+        <div class="aw-publish-bottom">
+            <div class="publish-item article-img">
+                <label><?php _e('活动封面');?></label>
+                <div class="info">
+                    <a class="btn btn-mini btn-success" id="logo_uploader" href="javascript:;">
+                        <img src="<?php echo $this->project_info['project_img']?$this->project_info['project_img']:G_STATIC_URL.'/css/default/img/default-cover.jpg'; ?>" id="logo_img">
+                    </a>
+                </div>
+            </div>
+
+            <div class="publish-item">
+                <label><?php _e('活动人数');?></label>
+                <div class="info" >
+                    <input type="text" name="amount" value="<?php echo $this->project_info['amount']; ?>" placeholder="请输入活动人数" />
+                </div>
+            </div>
+            <div class="publish-item">
+                <label><?php _e('活动地点');?></label>
+                <div class="info" style="width: calc(100% - 70px);">
+                    <select name="province" class="select_area" style="width: 33%;display: inline-block"></select>
+                    <select name="city" class="select_area" style="width: 33%;display: inline-block"></select>
+                </div>
+            </div>
+
+            <div class="publish-item">
+                <label><?php _e('活动时间');?></label>
+                <div class="info" style="width: calc(100% - 70px);">
+                    <input type="text" name="start_time" placeholder="开始时间" id="start_time"  value="<?php if ($this->project_info['start_time']) echo date('Y-m-d H:i:s',$this->project_info['start_time']); ?>" style="width: 33%;display: inline-block" />
+                    <span>-</span>
+                    <input type="text" name="end_time" placeholder="结束时间"  id="end_time"  value="<?php if ($this->project_info['end_time']) echo date('Y-m-d H:i:s',$this->project_info['end_time']); ?>"  style="width: 33%;display: inline-block"/>
+                </div>
+            </div>
+
+            <div class="publish-item">
+                <label>
+                    <a  href="javascript:;"><?php _e('活动分类');?></a>
+                </label>
+                <div class="info aw-add-category" id="category_id">
+                    <?php echo $this->project_info['category_id'] ? $this->project_info['category_name'] : '选择分类';?>
+                </div>
+            </div>
+
+            <?php if(!$this->project_info['question_id']) { ?>
+            <div class="publish-item publish-topic-item" data-type="publish" data-id="0">
+                <label>
+                    <a  href="javascript:;"><?php _e('活动话题');?></a>
+                </label>
+                <div class="info aw-add-topic aw-edit-topic" id="select-topic-container"><?php _e('选择话题');?></div>
+            </div>
+            <?php } ?>
+        </div>
+        <div class="aw-publish-fix">
+            <a href="javascript:;" id="submitBtn" ><?php _e('发表');?></a>
+        </div>
+    </div>
+</form>
+<link rel="stylesheet" type="text/css" href="<?php echo G_STATIC_URL; ?>/h5/js/select/css/mobileSelect.css">
+<script src="<?php echo G_STATIC_URL; ?>/h5/js/select/js/mobileSelect.js" type="text/javascript"></script>
+<script>
+    var categoryData = <?php echo $this->project_category_list;?>;
+    var categorySelect = new MobileSelect({
+        trigger: '.aw-add-category',
+        title: '请选择分类',
+        wheels: [
+            {
+                data:categoryData
+            }
+        ],
+        position:[0],
+        callback:function(indexArr, data){
+            $('.category_id').val(data[0].id);
+            $('#category_id').text(data[0].value);
+            $('.aw-add-category').html('<a  href="javascript:;" class="aw-add-category">' + _t('+ 分类')+'<i class="iconfont iconxuanze"></i></a>');
+        }
+    });
+    $(document).ready(function () {
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+
+            laydate.render({
+                type: 'datetime',
+                elem: '#start_time', //指定元素
+                min: '<?php echo date("Y-m-d");?>',
+                max: '<?php echo date("Y-m-d",strtotime("+360day"));?>'
+            });
+            laydate.render({
+                type: 'datetime',
+                elem: '#end_time', //指定元素
+                min: '<?php echo date("Y-m-d");?>',
+                max: '<?php echo date("Y-m-d",strtotime("+360day"));?>'
+            });
+        });
+        $('.select_area').LocationSelect({
+            labels: ["<?php _e('请选择省份'); ?>", "<?php _e('请选择城市'); ?>"],
+            elements: document.getElementsByTagName("select"),
+            detector: function () {
+                this.select(["<?php echo $this->project_info['province']; ?>", "<?php echo $this->project_info['city']; ?>"]);
+            },
+            dataUrl: G_STATIC_URL + '/js/areas.js'
+        });
+    });
+   var logoUpload = new FileUpload('avatar', $('#logo_uploader'), $('#logo_img'), G_BASE_URL + '/publish/ajax/logo_upload/', {
+       tag: 'logo',
+       accept:'image/*'
+   }, function () {
+       $('input[name="logo_img"]').val($('#logo_img').attr('src'));
+   });
+</script>
+<?php run_hook('m_publish_page',['page'=>'question','area'=>'footer']);?>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

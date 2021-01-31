@@ -1,0 +1,85 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+    <div class="aw-top-divl">
+        <a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+    </div>
+    <span><?php _e('专栏详情');?></span>
+    <?php if($this->column_info['uid'] == $this->user_id && $this->user_id){ ?>
+    <div class="aw-top-div">
+        <img class="aw-top-more" src="<?php echo G_STATIC_URL;?>/h5/img/more.png">
+    </div>
+    <?php } ?>
+</div>
+<div class="aw-tzlb">
+    <div class="aw-tb-div aw-tzlb-div">
+        <li class="clearfix">
+            <img src="<?php echo $this->column_info['column_pic']; ?>" class="aw-tb-div-l">
+            <div class="aw-tb-div-c">
+                <b class="aw-one-line"><?php echo $this->column_info['column_name']; ?></b>
+                <p><?php _e('作者');?>：<a href="people/<?php echo $this->column_info['uid']; ?>"><span><?php echo $this->column_info['user_info']['user_name']; ?></span></a></p>
+                <span><?php _e('关注');?>:<?php echo num2tring($this->column_info['focus_count']); ?> <?php _e('文章');?>:<?php echo num2tring($this->column_info['article_num']); ?></span>
+                <div class="aw-one-line"><?php echo $this->column_info['column_description']; ?></div>
+            </div>
+            <?php if($this->column_info['uid'] != $this->user_id && $this->user_id){ ?>
+            <button type="button" class="aw-wgz <?php echo $this->has_focus_column ? 'disable' : '';?>" onclick="AWS.User.focus_column($(this), <?php echo $this->column_info['column_id']; ?>);">
+                <?php $this->has_focus_column ? _e('已关注') : '+ '._e('关注');?>
+            </button>
+            <?php } ?>
+        </li>
+    </div>
+    <div class="aw-tzlb-px">
+        <div class="aw-qa-tab">
+            <ul>
+                <li class="cur" data-sort="new" style="width: calc(100%/2);"><a href="javascript:;"><?php _e('最新');?></a></li>
+                <li data-sort="hot" style="width: calc(100%/2);"><a href="javascript:;"><?php _e('热门');?></a></li>
+            </ul>
+        </div>
+       <div id="ajaxList"></div>
+    </div>
+    <?php if($this->column_info['uid'] == $this->user_id && $this->user_id && $this->column_info['is_verify']){ ?>
+    <a href="m/publish/article/column_id-<?php echo $this->column_info['column_id'];?>" class="aw-tzlb-add"><img src="<?php echo G_STATIC_URL;?>/h5/img/bj.png"></a>
+    <?php } ?>
+</div>
+<div class="aw-toast aw-top-toast" style="display: none">
+    <div class="aw-toast-hf aw-top-more-toast">
+        <?php if ($column['is_verify'] != '0') { ?>
+        <dl onclick="AWS.confirm('确认删除该专栏?',G_BASE_URL + '/column/ajax/delete_column/','column_id=<?php echo $this->column_info['column_id']; ?>')">
+            <dt><i class="iconfont iconshanchu-xian"></i></dt>
+            <dd>
+                <a href="javascript:;"><?php _e('删除'); ?></a>
+            </dd>
+        </dl>
+        <dl onclick="window.location.href = G_BASE_URL + '/m/column/apply/<?php echo $this->column_info['column_id']; ?>'">
+            <dt><i class="iconfont iconbianji-x1"></i></dt>
+            <dd><a href="javascript:;"><?php _e('编辑');?></a></dd>
+        </dl>
+        <?php } ?>
+    </div>
+    <div class="aw-bg"></div>
+</div>
+<script type="text/javascript">
+    var url = '';
+    layui.use(['element', 'flow'], function () {
+        var element = layui.element;
+        var flow = layui.flow;
+        $('.aw-qa-tab li').click(function () {
+            $('.aw-qa-tab li').removeClass('cur');
+            $(this).addClass('cur');
+            var sort_type = $(this).attr('data-sort');
+            url = G_BASE_URL + "/m/ajax/article_list/column_id\-<?php echo $this->column_info['column_id'];?>__sort\-"+sort_type;
+            $('#ajaxList').empty();
+            flow.load({
+                elem: '#ajaxList', //指定列表容器
+                done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                    AWS.ajaxRequest(url, 'get', 'html', {page: page}, function (res) {
+                        next(res, page < $($(res)[0]).attr('data-total'));
+                    });
+                }
+            });
+            element.init();
+            flyLoad();
+        });
+    });
+    $(".aw-qa-tab").find('li').eq(0).click();
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

@@ -1,0 +1,24 @@
+<?php foreach ($this->list AS $key => $val) { ?>
+<div class="aw-favorite-item" data-total="<?php echo $this->total;?>">
+    <div class="mod-head">
+        <p class="action-str">
+            <?php if ($val['last_action_str']) { ?><?php echo $val['last_action_str']; ?> • <?php echo date_friendly($val['add_time']); ?><?php } ?>
+        </p>
+        <h4><a href="<?php echo $val['link']; ?>"><?php echo $val['title']; ?></a></h4>
+    </div>
+    <div class="mod-body">
+        <?php if ($val['answer_info']) { ?>
+        <?php if ($val['answer_info']['anonymous'] == 0) { ?>
+        <?php } ?>
+        <!-- 评论内容 -->
+        <div class="content aw-two-line">
+            <a class="aw-user-name" data-id="<?php echo $val['user_info']['uid']; ?>" href="people/<?php echo $val['user_info']['uid']; ?>"><?php echo $val['user_info']['user_name']; ?> : </a><?php echo cjk_substr(strip_tags(html_entity_decode($val['answer_info']['answer_content'])), 0, 130, 'UTF-8', '...'); ?>
+        </div>
+        <!-- end 评论内容 -->
+        <?php } ?>
+    </div>
+    <div class="mod-footer">
+        <a class="text-color-999" onclick="AWS.User.remove_favorite('<?php echo $val['item_type']; ?>','<?php echo $val['item_id']; ?>');"><?php _e('取消收藏'); ?></a>
+    </div>
+</div>
+<?php } ?>

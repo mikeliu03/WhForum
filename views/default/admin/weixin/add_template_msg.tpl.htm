@@ -1,0 +1,90 @@
+<?php TPL::output('admin/global/header.tpl.htm'); ?>
+<?php TPL::output('admin/global/nav_menu.tpl.htm'); ?>
+
+<div class="aw-content-wrap">
+    <div class="mod">
+        <div class="mod-head">
+            <h3>
+                <?php if ($this->account_info) { ?>
+                <span class="pull-left"><?php _e('编辑消息模板'); ?></span>
+                <?php } else { ?>
+                <ul class="nav nav-tabs">
+                    <li><a href="admin/weixin/template_msg/"><?php _e('消息模板列表'); ?></a></li>
+                    <li class="active"><a href="admin/weixin/add_template_msg/<?php if (!$this->template_msg_info){ echo $this->template_msg_info['id']; }else{ echo $this->template_msg_info['id'];} ?>"><?php if (!$this->template_msg_info){ echo '新增消息模板'; }else{ echo '编辑消息模板';} ?></a></li>
+                </ul>
+                <?php } ?>
+            </h3>
+        </div>
+        <div class="tab-content mod-content">
+        <form action="admin/ajax/weixin/save_template_msg/" id="template_msg_form" method="post" onsubmit="return false">
+        <table class="table table-striped">
+            <?php if ($this->template_msg_info) { ?>
+            <input name="id" type="hidden" value="<?php echo $this->template_msg_info['id']; ?>" />
+            <?php } ?>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <span class="col-sm-3 col-xs-3 control-label"><?php _e('适用通知类型'); ?>:</span>
+                        <div class="col-sm-9 col-xs-9">
+                            <?php foreach($this->template_type as $k=>$v){?>
+                            <label class="checkbox-inline">
+                                <input type="radio" name="template_type" value="<?php echo $k;?>"<?php if (!$this->template_msg_info OR $this->template_msg_info['template_type'] == $k) { ?> checked="checked"<?php } ?> />
+                                <?php _e($v); ?>
+                            </label>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <span class="col-sm-3 col-xs-3 control-label"><?php _e('消息模板ID'); ?>:</span>
+                        <div class="col-sm-9 col-xs-9">
+                            <input type="text" class="form-control" name="template_id" value="<?php if ($this->template_msg_info){ echo $this->template_msg_info['template_id'];}?>">
+                            <span class="help-block">请到微信后台获取模板消息ID</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        <span class="col-sm-3 col-xs-3 control-label"><?php _e('消息模板数据'); ?>:</span>
+                        <div class="col-sm-9 col-xs-9">
+                            <textarea class="form-control" rows="6" name="template_data" placeholder=""><?php if ($this->template_msg_info){ echo $this->template_msg_info['template_data'];}?></textarea>
+                            <span class="help-block">替换参数：$title | 问题/文章标题 , $content | 问题/文章内容 , $time | 发布时间 , $answer_content | 回答内容  例如：
+<pre>
+原模板内容：
+关键词1：{{keyword1.DATA}}
+关键词2：{{keyword2.DATA}}
+关键词3：{{keyword3.DATA}}
+关键词4：{{keyword4.DATA}}
+关键词5：{{keyword5.DATA}}
+替换后内容：
+{
+   "keyword1":{"value":"$title","color":"#173177"},
+   "keyword2":{"value":"问题最新回复","color":"#173177" },
+   "keyword3":{"value":"$time","color":"#173177" },
+   "keyword4":{"value":"$content", "color":"#173177"},
+   "keyword5":{"value":"您的问题有最新回复，回复内容：$answer_content", "color":"#173177"}
+ }
+</pre>
+                            </span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tfoot>
+                <tr>
+                    <td>
+                        <input type="button" value="<?php _e('保存设置'); ?>" class="btn btn-primary center-block" onclick="AWS.ajax_post($('#template_msg_form'));" />
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        </form>
+        </div>
+    </div>
+</div>
+<?php TPL::output('admin/global/footer.tpl.htm'); ?>

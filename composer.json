@@ -1,0 +1,7 @@
+{
+    "require": {
+        "qcloud/cos-sdk-v5": "^1.3",
+        "aliyuncs/oss-sdk-php": "2.2.4",
+        "ezyang/htmlpurifier": "^4.13"
+    }
+}

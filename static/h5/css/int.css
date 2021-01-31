@@ -1,0 +1,24 @@
+@charset "utf-8";
+/* CSS Document */
+
+*{margin:0;padding:0;}
+*html{}
+body, html{ width:100%; }
+body{background:#ffffff;font: 16px/1.5 "Microsoft YaHei", "微软雅黑", "STHeiti", "WenQuanYi Micro Hei", SimSun, sans-serif;}
+body,ul,ol,li,p,h1,h2,h3,h4,h5,h6,form,fieldset,table,td,img,div,tr{margin:0;padding:0;}
+input,select{vertical-align:middle; border:none;}
+ul,li{list-style-type:none;}
+img{border:0 none;vertical-align: unset;}
+a:link, a:visited{ color:#333333; text-decoration: none;}
+a:hover{color:#63a50a}
+h1{font-size:24px;}
+h2{font-size:20px;}
+h3{font-size:18px;}
+h4{font-size:16px;}
+h5{font-size:14px;}
+h6{font-size:12px;}
+.clear{ display:block; clear:both; height:0px; width:100%; font-size:0; line-height:0px; visibility:hidden; overflow:hidden;}
+input:focus {outline:none;}
+.clearfix:after, .clearfix:before{ content:""; display:table; clear:both; zoom:1;}
+button{border: none}
+

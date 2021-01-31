@@ -1,0 +1,132 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-qanda aw-padding aw-no-top">
+    <div class="aw-selectLabel-top aw-qanda-top clearfix" style="border-bottom: 2px solid #eee">
+        <div class="aw-selectLabel-tl" onclick="window.location.href= G_BASE_URL + '/m/search/'">
+            <img src="<?php echo G_STATIC_URL;?>/h5/img/search.png">
+            <input class="aw-pl-ys"  disabled name="q" placeholder="输入你要搜索的内容"/>
+        </div>
+        <a href="m/column/apply/" class="aw-selectLabel-tr"><i class="iconfont iconfaqihuodong"></i><?php _e('申请');?></a>
+    </div>
+    <?php if($this->column_list || $this->article_list) { ?>
+    <?php if($this->column_list) { ?>
+    <div class="aw-tb-div aw-bg-white">
+        <b><?php _e('热门专栏');?> <a href="m/column/list/"><img src="<?php echo G_STATIC_URL;?>/h5/img/more.png"></a></b>
+        <ul id="columnBox">
+            <?php foreach($this->column_list as $key=>$column) { ?>
+            <li class="clearfix column-item" data-total="<?php echo $this->total;?>">
+                <a href="column/details/<?php echo $column['column_id']; ?>">
+                    <img src="<?php echo $column['column_pic']; ?>" class="aw-tb-div-l">
+                </a>
+                <div class="aw-tb-div-c">
+                    <b class="aw-one-line">
+                        <a href="column/details/<?php echo $column['column_id'];?>">
+                            <?php echo $column['column_name']; ?>
+                        </a>
+                    </b>
+                    <span><?php _e('浏览');?>:<?php echo num2tring(round($column['views_count'])); ?> <?php _e('文章');?>:<?php echo num2tring(round($column['article_count'])); ?></span>
+                    <i class="aw-one-line"><?php echo $column['column_description']; ?></i>
+                </div>
+
+                <?php if($_GET['sort']=='my') { ?>
+                <div class="aw-column-status">
+                    <?php if($column['is_verify']==1) { ?>
+                    <i class="iconfont iconyishenhe ok"></i> <?php _e('审核通过');?>
+                    <?php } else if($column['is_verify']==-1){?>
+                    <i class="iconfont iconshenhebutongguo no"></i> <?php _e('审核拒绝');?>
+                    <?php }else{ ?>
+                    <i class="iconfont iconshenhezhong wait"></i> <?php _e('等待审核');?>
+                    <?php } ?>
+                </div>
+                <?php } ?>
+
+                <?php if($column['uid'] != $this->user_id && $this->user_id){ ?>
+                <button type="button" class="aw-wgz <?php echo $column['has_focus_column'] ? 'disable' : '';?>" onclick="AWS.User.focus_column($(this), <?php echo $column['column_id']; ?>);">
+                    <?php $column['has_focus_column'] ? _e('已关注') : '+ '._e('关注');?>
+                </button>
+                <?php } ?>
+            </li>
+            <?php } ?>
+        </ul>
+        <a href="javascript:;" class="aw-hyp column-more">
+            <i class="iconfont iconhuanyihuan"></i> <?php _e('换一批');?>
+        </a>
+    </div>
+    <?php } ?>
+    <?php if($this->article_list){ ?>
+    <div class="aw-tb-div aw-bg-white">
+        <b>
+            <?php _e('热门文章');?>
+            <a href="article/"><img src="<?php echo G_STATIC_URL;?>/h5/img/more.png"></a>
+        </b>
+        <div class="aw-qanda-list" id="ajaxList">
+            <?php foreach($this->article_list as $key=>$val) { ?>
+            <div class="aw-qanda-div aw-lineq" >
+                <p class="aw-q-div-t">
+                    <a href="article/<?php echo $val['id'];?>"><?php echo $val['title'];?></a>
+                    <?php  if($val['set_top']==1 && $_GET['sort_type']=='new'){?>
+                    <span class="aw-set-top"><?php _e('顶');?></span>
+                    <?php }?>
+                </p>
+                <div class="aw-q-div-c clearfix">
+                    <p>
+                        <?php echo cjk_substr(strip_tags(htmlspecialchars_decode($val['message'])),0,80);?>
+                    </p>
+                </div>
+                <?php if($val['img_list']) { ?>
+                <div class="aw-x-h-b clearfix aw-preview-img">
+                    <?php if(count($val['img_list']) >1){ ?>
+                    <?php foreach($val['img_list'] as $k=>$v) { ?>
+                    <?php if($k<3) { ?>
+                    <img src="<?php echo $v;?>" class="more-img">
+                    <?php } ?>
+                    <?php } ?>
+                    <?php }else{?>
+                    <img src="<?php echo $val['img_list'][0];?>" class="one-img">
+                    <?php } ?>
+                </div>
+                <?php } ?>
+                <div class="aw-q-div-b clearfix">
+                    <a class="aw-dz"><i class="icon icon-agree"></i> <?php _e('赞');?><?php echo $val['votes'] ? $val['votes'] : '';?></a>
+                    <a class="aw-hd"><i class="icon icon-comment"></i> <?php _e('评论');?><?php echo $val['comments'] ? $val['comments'] : '';?></a>
+                    <a class="aw-dz"><i class="iconfont iconliulan-copy"></i><?php _e('阅');?><?php echo $val['views'] ? $val['views'] : '';?></a>
+                    <a class="aw-hd"><i class="iconfont iconshijian"></i> <?php echo date_friendly($val['add_time'],604800,'m-d H:i');?></a>
+                    <a class="aw-more" href="people/<?php echo $val['user_info']['uid'];?>"><img src="<?php echo get_avatar_url($val['user_info']['uid']);?>"></a>
+                </div>
+            </div>
+            <?php } ?>
+        </div>
+        <a href="javascript:;" class="aw-hyp article-more">
+            <i class="iconfont iconhuanyihuan"></i> <?php _e('换一批');?>
+        </a>
+    </div>
+    <?php } ?>
+    <?php } else { ?>
+    <p class="text-center text-color-999" style="padding: 30px 0">
+        <img src="/static/h5/img/no_conetnt.png" width="70%"><br>
+    </p>
+    <?php } ?>
+</div>
+<div class="aw-nav">
+    <ul>
+        <li>
+            <a href="m/" class="<?php if ($_GET['c'] == 'main') { ?>aw-active<?php }?>"><i class="iconfont iconshouye"></i><?php _e('发现');?></a>
+        </li>
+        <li>
+            <a href="question/" class="<?php if ($_GET['c'] == 'question') { ?>aw-active<?php }?>"><i class="iconfont iconwenda"></i><?php _e('问答');?></a>
+        </li>
+        <li>
+            <a href="column/" class="<?php if ($_GET['c'] == 'column') { ?>aw-active<?php }?>"><i class="iconfont icondudaozhuanlan"></i><?php _e('专栏');?></a>
+        </li>
+        <li>
+            <a href="topic/" class="<?php if ($_GET['c'] == 'topic') { ?>aw-active<?php }?>"><i class="iconfont iconlabel"></i><?php _e('话题');?></a>
+        </li>
+        <li>
+            <a href="people/<?php echo $this->user_info['uid']; ?>" class="<?php if ($_GET['c'] == 'people') { ?>aw-active<?php }?>"><i class="iconfont iconremenyonghu"></i><?php _e('我的');?></a>
+        </li>
+    </ul>
+</div>
+<script type="text/javascript">
+    AWS.load_ajax_view(G_BASE_URL + '/column/ajax/list/sort\-new',$('#columnBox'),$('.column-more'));
+    AWS.load_ajax_view(G_BASE_URL + '/explore/ajax/list/post_type\-article__sort_type\-hot__per_page\-6',$('#ajaxList'),$('.article-more'));
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

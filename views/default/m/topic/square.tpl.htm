@@ -1,0 +1,111 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<style>
+    .aw-p-fix{top:0}
+</style>
+<div class="aw-selectLabel aw-padding aw-no-top">
+    <div class="aw-selectLabel-top aw-qanda-top clearfix">
+        <div class="aw-selectLabel-tl" onclick="window.location.href= G_BASE_URL + '/m/search/'">
+            <img src="<?php echo G_STATIC_URL;?>/h5/img/search.png">
+            <input class="aw-pl-ys"  disabled name="q" placeholder="输入你要搜索的内容"/>
+        </div>
+        <a href="publish/" class="aw-selectLabel-tr">
+            <img src="<?php echo G_STATIC_URL;?>/h5/img/tw.png"><?php _e('提问');?>
+        </a>
+    </div>
+    <?php if ($this->parent_topics) { ?>
+    <div class="wrapper aw-category-select" id="category">
+        <div class="scroller">
+            <ul>
+                <li class="text" data-id="0">
+                    <a href="javascript:;"><?php _e('全部'); ?></a>
+                </li>
+                <?php foreach ($this->parent_topics AS $key => $val) { ?>
+                <li class="text <?php if ($_GET['topic_id'] == $val['topic_id']) { ?> cur<?php } ?>" data-id="<?php echo $val['topic_id'];?>">
+                    <a href="javascript:;"><?php echo $val['topic_title']; ?></a>
+                </li>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
+    <?php } ?>
+
+    <div class="aw-qa-tab">
+        <ul>
+            <li class="cur" data-sort="all"><a href="javascript:;"><?php _e('全部'); ?></a></li>
+            <li data-sort="month"><a href="javascript:;"><?php _e('%s 天', 30); ?></a></li>
+            <li data-sort="week"><a href="javascript:;"><?php _e('%s 天', 7); ?></a></li>
+        </ul>
+    </div>
+    <div class="aw-topic-list">
+        <ul id="ajaxList">
+
+        </ul>
+    </div>
+
+</div>
+
+<div class="aw-nav">
+    <ul>
+        <li>
+            <a href="m/" class="<?php if ($_GET['c'] == 'main') { ?>aw-active<?php }?>"><i class="iconfont iconshouye"></i><?php _e('发现');?></a>
+        </li>
+        <li>
+            <a href="question/" class="<?php if ($_GET['c'] == 'question') { ?>aw-active<?php }?>"><i class="iconfont iconwenda"></i><?php _e('问答');?></a>
+        </li>
+        <li>
+            <a href="column/" class="<?php if ($_GET['c'] == 'column') { ?>aw-active<?php }?>"><i class="iconfont icondudaozhuanlan"></i><?php _e('专栏');?></a>
+        </li>
+        <li>
+            <a href="topic/" class="<?php if ($_GET['c'] == 'topic') { ?>aw-active<?php }?>"><i class="iconfont iconlabel"></i><?php _e('话题');?></a>
+        </li>
+        <li>
+            <a href="people/<?php echo $this->user_info['uid']; ?>" class="<?php if ($_GET['c'] == 'people') { ?>aw-active<?php }?>"><i class="iconfont iconremenyonghu"></i><?php _e('我的');?></a>
+        </li>
+    </ul>
+</div>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/flexible.js"></script>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/iscroll.js"></script>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/navbarscroll.js"></script>
+<script type="text/javascript">
+    var TOPIC_ID =0;
+    $('.wrapper').navbarscroll();
+    $('#category').navbarscroll({
+        endClickScroll:function(obj){
+            TOPIC_ID = obj.attr('data-id');
+            $(".aw-qa-tab").find('li').eq(0).click();
+        }
+    });
+
+    layui.use(['element', 'flow'], function () {
+        var element = layui.element;
+        var flow = layui.flow;
+        $('.aw-qa-tab li').click(function () {
+            $('.aw-qa-tab li').removeClass('cur');
+            $(this).addClass('cur');
+            var sort_type = $(this).attr('data-sort');
+            var url = G_BASE_URL + '/m/ajax/topic_list/type\-'+ sort_type+'__topic_id\-' + TOPIC_ID;
+            $('#ajaxList').empty();
+            flow.load({
+                elem: '#ajaxList', //指定列表容器
+                done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                    AWS.ajaxRequest(url, 'get', 'html', {page: page}, function (res) {
+                        next(res, page < $($(res)[0]).attr('data-total'));
+                    });
+                }
+            });
+            element.init();
+        });
+    });
+    $(".aw-qa-tab").find('li').eq(0).click();
+
+    $(window).scroll(function()
+    {
+        if ($(document).scrollTop() >= 155) {
+            $("div.aw-qa-tab").addClass('aw-p-fix');
+        }
+        if ($(document).scrollTop() < 155) {
+            $("div.aw-qa-tab").removeClass('aw-p-fix');
+        }
+    });
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

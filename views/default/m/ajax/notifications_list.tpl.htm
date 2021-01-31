@@ -1,0 +1,35 @@
+<?php if ($this->list) { ?>
+<?php foreach($this->list AS $key => $val) { ?>
+<li class="aw-newxx" data-total="<?php echo $this->total;?>">
+    <?php if($val['anonymous']) { ?>
+    <a href="javascript:;" >
+        <img class="aw-xx-bbl" src="<?php echo G_STATIC_URL;?>/common/avatar-mid-img.png">
+    </a>
+    <?php }else{ ?>
+    <a href="<?php echo $val['p_url'];?>" >
+        <img class="aw-xx-bbl" src="<?php echo get_avatar_url($val['p_uid'],'mid');?>">
+    </a>
+    <?php } ?>
+    <div class="aw-xx-bbd">
+        <p class="clearfix">
+            <span><?php echo $val['message']; ?></span>
+        </p>
+        <?php if ($val['extend_message']) { ?>
+        <p class="aw-newxx">
+            <?php echo $val['extend_message'];?>
+        </p>
+        <?php } ?>
+    </div>
+    <div class="aw-xx-bottom">
+        <?php echo $val['add_time']; ?>
+        <?php if ($val['read_flag'] == 0) { ?>
+        <img class="aw-xx-bbr" onclick="AWS.User.read_notification($(this).parents('li'), <?php echo $val['notification_id']; ?>, false);" src="<?php echo G_STATIC_URL;?>/h5/img/new.png">
+        <?php } ?>
+    </div>
+</li>
+<?php } ?>
+<?php }else { ?>
+<p class="text-center text-color-999" style="padding: 30px 0">
+    <img src="/static/h5/img/no_conetnt.png" width="70%"><br>
+</p>
+<?php } ?>

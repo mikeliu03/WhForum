@@ -1,0 +1,39 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+    <div class="aw-top-divl">
+        <a href="javascript:;" onclick="window.history.back(-1);">
+            <img class="aw-top-back" src="<?php echo G_STATIC_URL;?>/h5/img/back.png">
+        </a>
+    </div>
+    <span><?php _e('私信');?></span>
+    <div class="aw-top-div">
+        <a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+    </div>
+</div>
+<div class="aw-inbox-list">
+    <?php if ($this->list) { ?>
+    <?php foreach($this->list AS $key => $val) { ?>
+    <div class="aw-item<?php if ($val['unread'] > 0) { ?> active<?php } ?>">
+        <dl>
+            <dt>
+                <a href="people/<?php echo $val['uid']; ?>">
+                    <img src="<?php echo get_avatar_url($val['uid'], 'mid'); ?>" alt="" />
+                </a>
+            </dt>
+            <dd>
+                <p class="info">
+                    <a class="aw-user-name" data-id="<?php echo $val['uid']; ?>" href="people/<?php echo $val['uid']; ?>"><?php echo $val['user_name']; ?></a>
+                    <span><?php echo date_friendly($val['update_time'],604800,'Y-m-d'); ?></span>
+                </p>
+                <p class="aw-one-line content"><a href="inbox/read/<?php echo $val['id']; ?>"><?php echo $val['last_message']; ?></a></p>
+                <p class="more">
+                    <a href="inbox/read/<?php echo $val['id']; ?>"><?php if ($val['unread']) { ?><?php _e('有'); ?> <?php echo $val['unread']; ?> <?php _e('条新回复'); ?><?php } else { ?><?php _e('共 %s 条对话', $val['count']); ?><?php } ?></a> &nbsp;
+                    <a href="javascript:;" class="text-color-999" onclick="AWS.dialog('confirm', {'message' : '<?php _e('确认删除对话'); ?>?'}, function(){window.location = G_BASE_URL + '/inbox/delete_dialog/dialog_id-<?php echo $val['id']; ?>'});"><?php _e('删除'); ?></a>
+                </p>
+            </dd>
+        </dl>
+    </div>
+    <?php } ?>
+    <?php } ?>
+</div>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

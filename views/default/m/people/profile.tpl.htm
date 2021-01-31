@@ -1,0 +1,125 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+	<div class="aw-top-divl">
+		<a href="javascript:;" onclick="window.history.back(-1);">
+			<img class="aw-top-back" src="<?php echo G_STATIC_URL;?>/h5/img/back.png">
+		</a>
+	</div>
+	<span ><?php _e('资料设置');?></span>
+	<div class="aw-top-div">
+		<a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+	</div>
+</div>
+<div class="aw-yqhd aw-zhsz">
+	<div class="aw-user-avatar">
+		<a id="avatar_uploader" href="javascript:;">
+			<img id="avatar_src" src="<?php echo get_avatar_url($this->user_id, 'max'); ?>?rand=<?php echo rand(1, 999); ?>">
+			<br><span><?php _e('点击头像修改');?></span>
+		</a>
+	</div>
+	<div class="aw-my-list">
+		<form action="account/ajax/profile_setting/" method="post" id="setting-account">
+			<div class="form-item">
+				<label><?php _e('昵称');?></label>
+				<div style="line-height: 36px">
+					<?php if ($this->user_info['user_name'] AND $this->user_info['user_name'] != $this->user_info['email']) { ?>
+					<?php echo $this->user_info['user_name']; ?>
+					<?php } else { ?>
+					<input type="text" name="user_name" value="<?php echo $this->user_info['user_name'];?>" placeholder="请输入用户昵称">
+					<?php } ?>
+				</div>
+			</div>
+			<div class="form-item">
+				<label><?php _e('性别');?></label>
+				<div style="line-height: 36px">
+					<input type="radio" value="0" <?php echo $this->user_info['sex']==0?'checked':'';?> name="sex"/> <?php _e('保密');?>&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="radio" value="1" <?php echo $this->user_info['sex']==1?'checked':'';?> name="sex"/> <?php _e('男');?>&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="radio" value="2" <?php echo $this->user_info['sex']==2?'checked':'';?> name="sex"/> <?php _e('女');?>
+				</div>
+			</div>
+			<div class="form-item">
+				<label><?php _e('签名');?></label>
+				<div>
+					<textarea name="signature" placeholder="请输入个人签名"><?php _e($this->user_info['signature']);?></textarea>
+				</div>
+			</div>
+
+			<div class="form-item">
+				<label><?php _e('生日');?></label>
+				<div>
+					<select name="birthday_y" style="display: inline-block" class="form-control">
+						<option value=""></option>
+						<?php echo H::display_options($this->birthday_y, date('Y', $this->user_info['birthday'])); ?>
+					</select>
+					<?php _e('年'); ?>
+					<select name="birthday_m" style="display: inline-block" class="form-control">
+						<option value=""></option>
+						<?php echo H::display_options(array(
+								1 => 1,
+						2 => 2,
+						3 => 3,
+						4 => 4,
+						5 => 5,
+						6 => 6,
+						7 => 7,
+						8 => 8,
+						9 => 9,
+						10 => 10,
+						11 => 11,
+						12 => 12
+						), date('m', $this->user_info['birthday'])); ?>
+					</select>
+					<?php _e('月'); ?>
+					<select name="birthday_d " style="display: inline-block" class="form-control">
+						<option value=""></option>
+						<?php echo H::display_options($this->birthday_d, date('d', $this->user_info['birthday'])); ?>
+					</select>
+					<?php _e('日'); ?>
+				</div>
+			</div>
+
+			<div class="form-item">
+				<label><?php _e('现居');?></label>
+				<div>
+					<select name="province" class="select_area  form-control" style="display: inline-block"></select>
+					<select name="city" class="select_area form-control" style="display: inline-block">
+						<option value="0" ><?php _e('请选择城市');?></option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-item">
+				<label><?php _e('职业');?></label>
+				<div>
+					<select name="job_id" class="form-control">
+						<option value="0"><?php _e('请选择');?><?php _e('职业');?></option>
+						<?php echo H::display_options($this->job_list, $this->user_info['job_id']); ?>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-item">
+				<label><?php _e('个性网址');?></label>
+				<div>
+					<?php echo base_url();?>/people/ <input type="text" class="form-control" value="<?php echo $this->user_info['url_token']; ?>" maxlength="32" name="url_token" style="display:inline;width:30%;margin-bottom:0;border: 1px solid #eee"<?php if ($this->user_info['url_token_update'] AND $this->user_info['url_token_update'] > (TIMESTAMP - 3600 * 24 * 30)) { ?> disabled="disabled"<?php } ?> />
+				</div>
+			</div>
+
+			<button type="button" onclick="AWS.ajax_post($('#setting-account'))" class="aw-zhsz-btn">保存资料</button>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function () {
+		$('.select_area').LocationSelect({
+			labels: ["<?php _e('请选择省份'); ?>", "<?php _e('请选择城市'); ?>"],
+			elements: document.getElementsByTagName("select"),
+			detector: function () {
+				this.select(["<?php echo $this->user_info['province']; ?>", "<?php echo $this->user_info['city']; ?>"]);
+			},
+			dataUrl: G_BASE_URL.replace('/?', '') + '/static/js/areas.js'
+		});
+	});
+	var fileUpload = new FileUpload('avatar', $('#avatar_uploader'), $('#avatar_src'), G_BASE_URL + '/account/ajax/avatar_upload/', {'loading_status': '#avatar_uploading_status'});
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

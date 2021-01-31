@@ -1,0 +1,15 @@
+<?php if($this->topics_list) { ?>
+<?php foreach($this->topics_list as $key=>$val) { ?>
+<div class="topic-item" data-total="<?php echo $this->total;?>">
+    <div class="topic-img">
+        <a  href="topic/<?php echo $val['topic_id']; ?>">
+            <img src="<?php echo get_topic_pic_url('mid', $val['topic_pic']); ?>"/>
+        </a>
+    </div>
+    <div class="topic-info">
+        <h4 class="aw-one-line"><a href="topic/<?php echo $val['topic_id']; ?>"><?php _e(num2tring($val['topic_title'])); ?></a></h4>
+        <p><i class="iconfont iconwodewendang"></i><?php _e(num2tring($val['discuss_count'])); ?> <i class="iconfont iconshoucang"></i><?php _e(num2tring($val['focus_count']));?></p>
+    </div>
+</div>
+<?php } ?>
+<?php } ?>

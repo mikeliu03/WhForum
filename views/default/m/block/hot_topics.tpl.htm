@@ -1,0 +1,31 @@
+<?php if (is_array($this->hot_topics)) { ?>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/flexible.js"></script>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/iscroll.js"></script>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/navbarscroll.js"></script>
+<div class="aw-explore-topic">
+	<div class="aw-explore-title">
+		<h3><?php _e('热门话题');?></h3>
+		<a href="m/topic/" class="more">更多</a>
+	</div>
+	<div class="wrapper " id="category">
+		<div class="scroller" style="width: 100%">
+			<ul class="clearfix">
+				<?php foreach($this->hot_topics AS $key => $val) {?>
+				<li>
+					<a href="topic/<?php echo $val['topic_id'];?>"><img alt="" src="<?php echo get_topic_pic_url('mid', $val['topic_pic']); ?>" /></a>
+					<a href="topic/<?php echo $val['topic_id'];?>"><?php echo $val['topic_title'];?></a>
+				</li>
+				<?php } ?>
+			</ul>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$('.wrapper').navbarscroll();
+	$('#category').navbarscroll({
+		endClickScroll:function(obj){
+
+		}
+	});
+</script>
+<?php } ?>

@@ -1,0 +1,65 @@
+<?php if (is_array($this->list) && $this->list) { ?>
+<?php foreach ($this->list AS $key => $val) { ?>
+<div class="aw-qanda-div aw-lineq" data-total="<?php echo $this->total;?>">
+	<?php if($this->action==501) { ?>
+		<p class="aw-q-div-t">
+			<a href="<?php echo $val['link']; ?>"><?php echo $val['title']; ?></a>
+		</p>
+		<div class="aw-q-div-c clearfix">
+			<p>
+				<?php echo cjk_substr(strip_tags(htmlspecialchars_decode($val['article_info']['message'])), 0, 130, 'UTF-8', '...'); ?>
+			</p>
+		</div>
+		<div class="aw-q-div-b clearfix">
+			<a class="aw-dz"><i class="icon icon-agree"></i> 赞<?php echo $val['article_info']['votes'] ? $val['article_info']['votes'] : '';?></a>
+			<a class="aw-hd"><i class="icon icon-comment"></i> 评论<?php echo $val['article_info']['comments'] ? $val['article_info']['comments'] : '';?></a>
+			<a class="aw-hd"><i class="iconfont iconshijian"></i> <?php echo date_friendly($val['article_info']['add_time']);?></a>
+		</div>
+	<?php } else if($this->action==101) { ?>
+		<p class="aw-q-div-t">
+			<a href="<?php echo $val['link']; ?>"><?php echo $val['title']; ?></a>
+			<?php if($val['question_info']['is_reward']) { ?>
+			<span class="aw-q-div-txs"><img src="<?php echo G_STATIC_URL;?>/h5/img/jf.png">悬赏:<?php echo $val['question_info']['reward_money'];?></span>
+			<?php if($val['question_info']['is_reward']==1 ):?>
+			<span class="aw-q-div-tjxz">进行中</span>
+			<?php elseif($val['question_info']['is_reward']==4):?>
+			<span class="aw-q-div-tjxz">已结束</span>
+			<?php elseif($val['question_info']['is_reward']==2):?>
+			<span class="aw-q-div-tjxz">公示中</span>
+			<?php endif;?>
+			<?php } ?>
+		</p>
+		<div class="aw-q-div-c clearfix">
+			<p>
+				<span><a href="javascript:;">问题描述</a> ：</span>
+				<?php echo cjk_substr(strip_tags(htmlspecialchars_decode($val['question_info']['question_detail'])),0,130);?>
+			</p>
+		</div>
+		<div class="aw-q-div-b clearfix">
+			<a class="aw-dz"><i class="icon icon-agree"></i> 赞<?php echo $val['question_info']['agree_count'] ? $val['question_info']['agree_count'] : '';?></a>
+			<a class="aw-hd"><i class="icon icon-comment"></i> 回答<?php echo $val['question_info']['answer_count'] ? $val['question_info']['answer_count'] : '';?></a>
+			<a class="aw-hd"><i class="iconfont iconshijian"></i> <?php echo date_friendly($val['question_info']['add_time']);?></a>
+		</div>
+	<?php } else if($this->action==201) { ?>
+		<p class="aw-q-div-t">
+			<a href="<?php echo $val['link']; ?>"><?php echo $val['title']; ?></a>
+		</p>
+		<div class="aw-q-div-c clearfix">
+			<p>
+				<a href="<?php echo $val['user_info']['uid']; ?>"><?php echo $val['user_info']['user_name']; ?></a> :
+				<?php echo cjk_substr($val['answer_info']['answer_content'], 0, 130, 'UTF-8', '...'); ?>
+			</p>
+		</div>
+		<div class="aw-q-div-b clearfix">
+			<a class="aw-dz"><i class="icon icon-agree"></i> 赞<?php echo $val['answer_info']['agree_count'] ? $val['answer_info']['agree_count'] : '';?></a>
+			<a class="aw-hd"><i class="icon icon-comment"></i> 评论<?php echo $val['answer_info']['comment_count'] ? $val['answer_info']['comment_count'] : '';?></a>
+			<a class="aw-hd"><i class="iconfont iconshijian"></i> <?php echo date_friendly($val['answer_info']['add_time']);?></a>
+		</div>
+	<?php } ?>
+</div>
+<?php } ?>
+<?php } else { ?>
+<p class="text-center text-color-999" style="padding: 30px 0">
+	<img src="/static/h5/img/no_conetnt.png" width="70%"><br>
+</p>
+<?php } ?>

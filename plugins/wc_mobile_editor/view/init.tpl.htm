@@ -1,0 +1,116 @@
+<div class="aw-editor-box">
+    <div id="editorContainer"></div>
+    <input type="file" id="inputFile" style="display: none;" accept="image/*">
+    <textarea name="<?php _e($this->params['name']); ?>" id="edit-content" style="display: none;" cols="" rows="" placeholder="<?php _e($this->params['tips']); ?>">
+        <?php _e($this->params['value']); ?>
+    </textarea>
+</div>
+<link rel="stylesheet" href="<?php echo $this->static;?>/css/zx-editor.min.css">
+<style>
+    .zxeditor-container .zxeditor-toolbar-wrapper dl dd i{font-size: 25px;color: #999;}
+    .zxeditor-container{padding: 10px 0}
+    .zxeditor-container .zxeditor-emoji-wrapper i,.zxeditor-modal-wrapper .zxeditor-modal-head .__switch{cursor: pointer}
+</style>
+<script src="<?php echo $this->static; ?>/js/zx-editor.min.js"></script>
+<script type="text/javascript">
+    var CAT_TYPE = "<?php echo $this->params['cat'];?>";
+
+    window.zxEditor = new ZxEditor('#editorContainer', {
+        top: 44,// 顶部偏移距离
+        padding: 0,// 编辑框左右边距
+        bottom:10
+    });
+    var mediaType ='';
+    zxEditor.addFooterButton([
+        {
+            name: 'video',
+            class: '',
+            icon: 'icon icon-video',
+            on: 'add-video'
+        },
+        {
+            name: 'file',
+            class: '',
+            icon: 'icon icon-file',
+            on: 'add-file'
+        }
+    ]);
+    $('.zxeditor-content-wrapper').css('margin-bottom',0);
+    if(CAT_TYPE=='answer')
+    {
+        $('.zxeditor-content-wrapper').css('height',($(window).height()-200));
+    }else{
+        $('.zxeditor-content-wrapper').css('height',($(window).height()-400));
+    }
+    $('.zxeditor-content-wrapper').css('overflow-y','scroll');
+    var $inputFile = document.querySelector('#inputFile');
+    zxEditor.on('select-picture', function () {
+        $('#inputFile').attr('accept','image/*');
+        $inputFile.click();
+    });
+    zxEditor.on('add-video', function () {
+        // 触发input点击事件
+        $('#inputFile').attr('accept','video/*');
+        mediaType = 'video';
+        $inputFile.click();
+    });
+    zxEditor.on('add-file', function () {
+        // 触发input点击事件
+        $('#inputFile').attr('accept','*');
+        mediaType = 'file';
+        $inputFile.click();
+    });
+    var editContent = $('#edit-content').val();
+    zxEditor.setContent(editContent);
+
+    $inputFile.addEventListener('change', function (e) {
+        var files = e.target.files; // 或者 $inputFile.files
+        var file = files[0];
+        // 上传文件至服务器
+        upload({
+            // 接收上传文件的服务器url
+            url:"<?php echo get_js_url('/publish/ajax/attach_upload/id-'.$this->params['cat'].'__attach_access_key-'.$this->params['attach_access_key']);?>&aws_upload_file="+file.name+'&timestamp='+(new Date()).getTime(),
+            file: file,
+            success: function (res) {
+                try {
+                    // 服务器返回的json字符串
+                    res = JSON.parse(res);
+                    console.log(res);
+                    if (!res.error) {
+                        if(res.is_image)
+                        {
+                            zxEditor.addImage(res.thumb.replace('90x90_',''))
+                        }else{
+                            if(mediaType=='video')
+                            {
+                                zxEditor.addMedia(res.thumb, 'video');
+                            }
+                            if(mediaType=='file'){
+                                zxEditor.addLink(res.thumb, 'attach_'+res.attach_id,1);
+                            }
+                        }
+                    } else {
+                        layer.msg(res.error);
+                    }
+                } catch (e) {}
+            },
+            error: function (err) {
+                layer.msg('文件上传失败');
+            },
+            complete:function(){
+                $('#inputFile').val('')
+            }
+        })
+    });
+    $(window).resize(function(){
+        var winHeight = $(window).height();
+        var thisHeight=$(this).height();
+        if(winHeight - thisHeight >50){
+            //当软键盘弹出，在这里面操作
+            $('.op_btn,.nav').hide()
+        }else{
+            //当软键盘收起，在此处操作
+            $('.op_btn,.nav').show()
+        }
+    });
+</script>

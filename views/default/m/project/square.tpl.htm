@@ -1,0 +1,67 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+    <div class="aw-top-divl">
+        <a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+    </div>
+    <span><?php _e('活动');?></span>
+</div>
+<div class="aw-hd aw-padding">
+    <div class="aw-selectLabel-top  aw-line clearfix">
+        <div class="aw-selectLabel-tl">
+            <img src="<?php echo G_STATIC_URL;?>/h5/img/search.png">
+            <input class="aw-pl-ys" type="" name="" id="" value="" placeholder="输入你要搜索的内容" />
+        </div>
+        <a href="#" class="aw-selectLabel-tr">取消</a>
+    </div>
+
+    <div class="aw-hd-choose">
+        <ul class="clearfix">
+            <li class="cur"><a href="#">最新<img src="<?php echo G_STATIC_URL;?>/h5/img/xz.png"></a></li>
+            <li><a href="#">类型<img src="<?php echo G_STATIC_URL;?>/h5/img/wx.png"></a></li>
+            <li><a href="#">状态<img src="<?php echo G_STATIC_URL;?>/h5/img/wx.png"></a></li>
+            <li><a href="#">地区<img src="<?php echo G_STATIC_URL;?>/h5/img/wx.png"></a></li>
+            <li><a href="#">重置</a></li>
+        </ul>
+    </div>
+
+    <div class="aw-hd-list">
+        <ul>
+            <?php foreach ($this->project_list AS $key => $val) { ?>
+            <li>
+                <a href="project/<?php echo $val['id']; ?>" class="clearfix">
+                    <img src="<?php echo get_setting('upload_url'); ?>/project/<?php echo $val['id']; ?>_main.jpg" />
+                    <div class="aw-hd-list-r">
+                        <b class="aw-one-line"><?php echo $val['title']; ?></b>
+                        <span class="aw-hddz"><img src="<?php echo G_STATIC_URL;?>/h5/img/hddz.png"><?php echo $val['province'].$val['city'];?></span>
+                        <span class="aw-hdrq"><img src="<?php echo G_STATIC_URL;?>/h5/img/hdrq.png"><?php echo date('m月d日',$val['start_time']); ?> - <?php echo date('m月d日',$val['end_time']); ?></span>
+                        <div>
+                            <i>正在报名</i>
+                            <span>已报名:<?php echo intval($val['paid']).'/'.intval($val['amount']); ?>人</span>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <?php } ?>
+        </ul>
+    </div>
+</div>
+<div class="aw-nav">
+    <ul>
+        <li>
+            <a href="m/" class="<?php if ($_GET['c'] == 'main') { ?>aw-active<?php }?>"><i class="iconfont iconshouye"></i><?php _e('发现');?></a>
+        </li>
+        <li>
+            <a href="question/" class="<?php if ($_GET['c'] == 'question') { ?>aw-active<?php }?>"><i class="iconfont iconwenda"></i><?php _e('问答');?></a>
+        </li>
+        <li>
+            <a href="column/" class="<?php if ($_GET['c'] == 'column') { ?>aw-active<?php }?>"><i class="iconfont icondudaozhuanlan"></i><?php _e('专栏');?></a>
+        </li>
+        <li>
+            <a href="topic/" class="<?php if ($_GET['c'] == 'topic') { ?>aw-active<?php }?>"><i class="iconfont iconlabel"></i><?php _e('话题');?></a>
+        </li>
+        <li>
+            <a href="people/<?php echo $this->user_info['uid']; ?>" class="<?php if ($_GET['c'] == 'people') { ?>aw-active<?php }?>"><i class="iconfont iconremenyonghu"></i><?php _e('我的');?></a>
+        </li>
+    </ul>
+</div>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

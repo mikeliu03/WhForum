@@ -1,0 +1,15 @@
+<?php if ($this->log) { ?>
+<?php foreach ($this->log AS $key => $val) { ?>
+<li data-total="<?php echo $this->total;?>">
+    <div class="aw-dh-list-l">
+        <span><?php echo $val['note'] ;?></span>
+        <i><?php echo date_friendly($val['time'], 604800, 'Y-m-d'); ?></i>
+    </div>
+    <b><?php echo $val['integral']; ?></b>
+</li>
+<?php } ?>
+<?php } else { ?>
+<p class="text-center text-color-999" style="padding: 30px 0">
+    <img src="/static/h5/img/no_conetnt.png" width="70%"><br>
+</p>
+<?php } ?>

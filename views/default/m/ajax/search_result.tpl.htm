@@ -1,0 +1,93 @@
+<?php  if ($this->search_result) { ?>
+<?php foreach ($this->search_result AS $key => $val){ ?>
+    <?php if ($val['type'] == 'articles'){ ?>
+    <div class="aw-qanda-div aw-lineq" data-total="<?php echo $this->total;?>">
+        <p class="aw-q-div-t aw-title">
+            <a href="<?php echo $val['url']; ?>"><?php echo $val['name'];?></a>
+        </p>
+        <div class="aw-q-div-c clearfix">
+            <p class="search-content">
+                <?php echo $val['detail']['content'];?>
+            </p>
+        </div>
+        <div class="aw-q-div-b clearfix">
+            <a class="aw-dz"><i class="icon icon-agree"></i> 赞<?php echo $val['detail']['votes'] ? $val['detail']['votes'] : '';?></a>
+            <a class="aw-hd"><i class="icon icon-comment"></i> 回答<?php echo $val['detail']['comments'] ? $val['detail']['comments'] : '';?></a>
+            <a class="aw-hd"><i class="iconfont iconshijian"></i> <?php  echo $val['detail']['add_time'];?></a>
+            <a class="aw-more" href="people/<?php echo $val['user_info']['uid'];?>"><img src="<?php echo get_avatar_url($val['user_info']['uid']);?>"></a>
+        </div>
+    </div>
+    <?php } ?>
+
+    <?php if($val['type']=='questions') { ?>
+    <div class="aw-qanda-div aw-lineq" data-total="<?php echo $this->total;?>">
+        <p class="aw-q-div-t aw-title">
+            <a href="<?php echo $val['url']; ?>"><?php echo $val['name'];?></a>
+        </p>
+        <div class="aw-q-div-c clearfix">
+            <p class="search-content">
+                <span><a href="javascript:;">问题描述</a> ：</span>
+                <?php echo $val['detail']['content'];?>
+            </p>
+        </div>
+        <div class="aw-q-div-b clearfix">
+            <a class="aw-dz"><i class="icon icon-agree"></i> 赞<?php echo $val['detail']['agree_count'] ? $val['detail']['agree_count'] : '';?></a>
+            <a class="aw-hd"><i class="icon icon-comment"></i> 回答<?php echo $val['detail']['answer_count'] ? $val['detail']['answer_count'] : '';?></a>
+            <a class="aw-hd"><i class="iconfont iconshijian"></i> <?php  echo $val['detail']['add_time'];?></a>
+            <?php if($val['anonymous']){ ?>
+            <a href="javascript:;" class="aw-more"><img src="/static/common/avatar-max-img.png"></a>
+            <?php }else{?>
+            <a href="m/people/<?php echo $val['user_info']['user_name']; ?>" class="aw-more"><img src="<?php echo get_avatar_url($val['user_info']['uid']); ?>"></a>
+            <?php }?>
+        </div>
+    </div>
+    <?php } ?>
+
+    <?php if($val['type']=='topics'){ ?>
+    <div class="clearfix aw-yqhd-div search-topic">
+        <a href="<?php echo $val['url']; ?>">
+            <img src="<?php echo $val['detail']['topic_pic']; ?>" class="aw-tb-div-l"/>
+        </a>
+        <div class="aw-tb-div-c">
+            <b class="aw-title">
+                <a href="<?php echo $val['url']; ?>"><?php echo $val['name'];?></a>
+                <i class="iconfont iconwodewendang"></i><?php _e( $val['detail']['discuss_count']); ?>
+                <i class="iconfont iconshoucang"></i><?php _e($val['detail']['focus_count']);?>
+            </b>
+            <i class="aw-one-line search-content">
+                <?php echo $val['detail']['topic_description'];?>
+            </i>
+        </div>
+    </div>
+    <?php } ?>
+
+    <?php if($val['type']=='users'){ ?>
+    <div class="clearfix search-user">
+        <div class="aw-bd-list-c">
+            <a  href="<?php echo $val['url']; ?>">
+                <img alt="" src="<?php echo $val['detail']['avatar_file']; ?>" />
+            </a>
+            <div>
+                <b class="aw-title">
+                    <a href="<?php echo $val['url']; ?>"><?php echo $val['name']; ?></a>
+                    <?php if ($val['verified']) { ?><i class="icon-v<?php if ($val['verified'] == 'enterprise') { ?> i-ve<?php } ?>" title="<?php if ($val['verified'] == 'enterprise') { ?><?php _e('企业认证'); ?><?php } else { ?><?php _e('个人认证'); ?><?php } ?>"></i><?php } ?>
+                </b>
+                <p><?php _e('威望');?>:<?php echo $val['detail']['reputation']; ?> <?php _e('赞同');?>:<?php echo $val['detail']['agree_count']; ?> <?php _e('感谢');?>：<?php echo $val['detail']['thanks_count']; ?></p>
+            </div>
+        </div>
+        <?php if ($val['uid'] != $this->user_id AND $this->user_id) { ?>
+        <div class="aw-bd-list-r">
+            <button type="button" onclick="AWS.User.follow($(this), 'user', <?php echo $val['search_id']; ?>);" class="aw-bd-lrgz <?php if ($val['focus']) { ?> disable<?php } ?>"><?php if ($val['focus']) { ?><?php _e('已关注'); ?><?php } else { ?><?php _e('+关注'); ?><?php } ?></button>
+            <?php if($this->user_id){?>
+            <button type="button" onclick="AWS.dialog('inbox','<?php echo $val['name']; ?>')"><img src="<?php echo G_STATIC_URL;?>/h5/img/bd.png">私信</button>
+            <?php } ?>
+        </div>
+        <?php } ?>
+    </div>
+    <?php } ?>
+<?php } ?>
+<?php } else { ?>
+<p class="text-center text-color-999" style="padding: 30px 0">
+    <img src="/static/h5/img/no_conetnt.png" width="70%"><br>
+</p>
+<?php } ?>

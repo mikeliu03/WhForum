@@ -1,0 +1,67 @@
+<?php TPL::output('admin/global/header.tpl.htm'); ?>
+<?php TPL::output('admin/global/nav_menu.tpl.htm'); ?>
+<div class="aw-content-wrap">
+    <div class="mod">
+        <div class="mod-head">
+            <h3>
+				<ul class="nav nav-tabs">
+					<li><a href="admin/plugin/"><?php _e('插件列表'); ?></a></li>
+					<?php if($this->new_plugins_count>0):?>
+				    <li><a href="javascript:;" onclick="AWS.ajax_request(G_BASE_URL+'/admin/plugin/get_new_plugin/');"><?php _e('您有'.$this->new_plugins_count.'个新插件,点击更新'); ?></a></li>
+					<?php endif;?>
+					<li><a href="admin/plugin/design/"><?php _e('设计插件'); ?></a></li>
+					<li class="active"><a href="admin/plugin/import/" target="_blank"><?php _e('导入插件'); ?></a></li>
+					<li><a href="http://market.wecenter.com/" target="_blank"><?php _e('应用市场'); ?></a></li>
+				</ul>
+            </h3>
+        </div>
+		<div class="mod-body tab-content">
+			<div class="alert alert-success collapse error_message"></div>
+			<form action="admin/plugin/save_import/" enctype="multipart/form-data" method="post" onsubmit="return false" id="plugin_form" class="form-horizontal">
+				<table class="table table-striped">
+					<tr>
+						<td>
+							<div class="form-group">
+								<span class="col-sm-3 col-xs-3 control-label"><?php _e('zip格式代码压缩包'); ?>:</span>
+								<div class="col-sm-3 col-xs-8">
+									<span class="mod-file">
+                                        <input type="button" class="btn btn-primary" value="<?php _e('点击上传压缩包');?>">
+                                        <input title="<?php _e('未选择任何文件'); ?>" type="file" name="package" accept=".zip" class="mod-input-file">
+                                    </span><br>
+                                    <p class="filetext"></p>
+                                    <span style="color: red;">注：请以wc_开头命名，如wc_xxxx_xxx.zip</span>
+								</div>
+							</div>
+						</td>
+					</tr>
+
+					<tfoot>
+					<tr>
+						<td>
+							<input type="button" value="<?php _e('保存设置'); ?>" class="btn btn-primary center-block" onclick="AWS.ajax_post($('#plugin_form'));" />
+						</td>
+					</tr>
+					</tfoot>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>
+
+<?php TPL::output('admin/global/footer.tpl.htm'); ?>
+
+<script type="text/javascript">
+	$('.mod-input-file').change(function()
+	{
+	    $('.filetext').text($('.mod-input-file').val());
+	});
+
+	$('input[name="package"]').change(function()
+	{
+	    if($(this).val()){
+	        $(this).attr('title','');
+	    }else{
+	        $(this).attr('title','<?php _e('未选择任何文件'); ?>');
+	    }
+	});
+</script>

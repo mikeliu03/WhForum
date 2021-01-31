@@ -1,0 +1,193 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+	<div class="aw-top-divl">
+		<a href="javascript:;" onclick="window.history.back(-1);">
+			<img class="aw-top-back" src="<?php echo G_STATIC_URL;?>/h5/img/back.png">
+		</a>
+	</div>
+	<span><?php $this->user_info['mobile'] ? _e('修改手机号') : _e('绑定手机号') ;?></span>
+	<div class="aw-top-div">
+		<a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+	</div>
+</div>
+<div class="aw-yqhd aw-zhsz">
+	<div class="aw-my-list">
+		<form action="account/setting/modify_mobile/" method="post" id="setting-account">
+			<?php if($this->user_info['mobile']) { ?>
+			<div class="form-item">
+				<label><?php _e('原手机号'); ?></label>
+				<div>
+					<input type="number" class="form-control" value="<?php echo $this->user_info['mobile'] ? $this->user_info['mobile'] : '';?>" id="old_mobile" name="old_mobile" style="line-height: 36px" <?php if($this->user_info['mobile']) { ?> readonly <?php } ?>/>
+				</div>
+			</div>
+			<div class="form-item">
+				<div class="aw-register-verify" style="width: 100%">
+					<div class="embed-captcha-old" style="width: 100%"></div>
+					<p class="wait">正在加载验证码......</p>
+				</div>
+			</div>
+			<div class="form-item">
+				<label><?php _e('验证码'); ?></label>
+				<div>
+					<input type="text" class="form-control" id="old_code"  name="old_code" style="width: calc(100% - 118px);float: left;"/>
+					<input type="button" data-type='old' value="获取验证码" class="btn btn-danger form-control sendCodeOld" style="float: right;width: 90px;height: 34px;">
+				</div>
+			</div>
+			<?php } ?>
+			<div class="form-item">
+				<label><?php _e('新手机号'); ?></label>
+				<div>
+					<input type="number" class="form-control" id="new_mobile" name="new_mobile" style="line-height: 36px"/>
+				</div>
+			</div>
+			<div class="form-item">
+				<div class="aw-register-verify" style="width: 100%">
+					<div class="embed-captcha-new" style="width: 100%"></div>
+					<p class="wait">正在加载验证码......</p>
+				</div>
+			</div>
+			<div class="form-item">
+				<label><?php _e('验证码'); ?></label>
+				<div>
+					<input type="text" class="form-control" id="new_code" name="new_code" style="width: calc(100% - 118px);float: left;"/>
+					<input  type="button" value="获取验证码" data-type='new' class="btn btn-danger form-control sendCodeNew" style="float: right;width: 90px;height: 34px;">
+				</div>
+			</div>
+			<button type="button" onclick="AWS.ajax_post('#setting-account')" class="aw-zhsz-btn"><?php _e('确认修改');?></button>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+	var USER_MOBILE = parseInt("<?php echo $this->user_info['mobile'] ? 1: 0;?>");
+
+	var handlerEmbedNew = function (captchaObj)
+	{
+		$(".sendCodeNew").click(function (e)
+		{
+			var mobile=$('#new_mobile').val();
+			checkMobile(captchaObj,mobile);
+		});
+		captchaObj.appendTo(".embed-captcha-new");
+		captchaObj.onReady(function () {
+			$(".wait").css('display','none');
+		});
+	};
+
+	$.ajax({
+		url: G_BASE_URL+ "/account/slide_captcha/?t=" + (new Date()).getTime()+"&client_type='web'", // 加随机数防止缓存
+		type: "get",
+		dataType: "json",
+		success: function (data)
+		{
+			var dataObj = eval('(' + data.rsm + ')');
+			initGeetest({
+				gt: dataObj.gt,
+				challenge: dataObj.challenge,
+				new_captcha: dataObj.new_captcha,
+				offline: !dataObj.success, // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+				product: "embed", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+				width: '100%' // 设置按钮宽度, 与父元素宽度一致
+			}, handlerEmbedNew);
+		}
+	});
+
+	if(USER_MOBILE)
+	{
+		var handlerEmbedOld = function (captchaObj)
+		{
+			$('.sendCodeOld').click(function ()
+			{
+				var mobile=$('#old_mobile').val();
+				checkMobile(captchaObj,mobile);
+			});
+			captchaObj.appendTo(".embed-captcha-old");
+			captchaObj.onReady(function () {
+				$(".wait").css('display','none');
+			});
+		};
+		$.ajax({
+			url: G_BASE_URL+ "/account/slide_captcha/?t=" + (new Date()).getTime()+"&client_type='web'", // 加随机数防止缓存
+			type: "get",
+			dataType: "json",
+			success: function (data) {
+				var dataObj = eval('(' + data.rsm + ')');
+				initGeetest({
+					gt: dataObj.gt,
+					challenge: dataObj.challenge,
+					new_captcha: dataObj.new_captcha,
+					offline: !dataObj.success, // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+					product: "embed", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+					width: '100%' // 设置按钮宽度, 与父元素宽度一致
+				}, handlerEmbedOld);
+			}
+		});
+	}
+
+
+	function sendSms(mobile) {
+		$.ajax({
+			type: "post",
+			url: G_BASE_URL+"/tools/sendSms/",
+			dataType: "json",
+			data: {
+				mobile: mobile,
+				challenge: '',
+				geetest_challenge: validate.geetest_challenge,
+				geetest_validate: validate.geetest_validate,
+				geetest_seccode: validate.geetest_seccode,
+				client_type: 'web',
+				genre: '1'
+			},
+			xhrFields: {
+				withCredentials: true
+			},
+			success: function (result) {
+				if (result.errno == 1)
+				{
+					layer.msg(result.err);
+					$(_this).attr('disabled',"true");
+					$(_this).css('background-color',"#cec9c8").css('color','#000');
+					sendInterval = 60;
+					setInterval(function () {
+						$(_this).html(sendInterval > 0? (--sendInterval + "秒") : "获取验证码");
+						if (sendInterval <= 0) {
+							sendInterval = 0;
+							$(_this).removeAttr("disabled");
+							$(_this).css('background-color',"#c9302c").css('color','#fff');
+							clearInterval();
+						}
+					}, 1000);
+				}else{
+					layer.msg(result.err);
+					captchaObj.reset(); // 调用该接口进行重置
+				}
+			}
+		});
+	}
+
+	function checkMobile(captchaObj,mobile)
+	{
+		var validate = captchaObj.getValidate();
+		if (!validate)
+		{
+			AWS.alert("请先完成验证");
+			return false;
+		} else{
+			$.post(G_BASE_URL + '/account/ajax/check_mobile/',{
+				mobile:mobile,
+				type:'check_mobile',
+			}, function (result)
+			{
+				if (result.errno == -1)
+				{
+					AWS.alert(result.err);
+					captchaObj.reset();
+					return false;
+				}else{
+					sendSms(mobile);
+				}
+			}, 'json');
+		}
+	}
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

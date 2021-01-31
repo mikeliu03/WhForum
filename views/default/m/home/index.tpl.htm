@@ -1,0 +1,58 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+	<div class="aw-top-divl">
+		<a href="javascript:;" onclick="window.history.back(-1);">
+			<img class="aw-top-back" src="<?php echo G_STATIC_URL;?>/h5/img/back.png">
+		</a>
+	</div>
+	<span><?php _e('我参与的');?></span>
+	<div class="aw-top-div">
+		<a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+	</div>
+</div>
+<div class="aw-tzlb">
+	<div class="aw-qa-tab">
+		<ul>
+			<li data-act="201" class="cur"><a href="javascript:;">回答</a></li>
+			<li data-act="101"><a href="javascript:;">问题</a></li>
+			<li data-act="501"><a href="javascript:;">文章</a></li>
+		</ul>
+	</div>
+
+	<div class="aw-qanda-list" id="ajaxList">
+
+	</div>
+</div>
+<script type="text/javascript">
+	var url;
+	layui.use(['element', 'flow'], function () {
+		var element = layui.element;
+		var flow = layui.flow;
+		$('.aw-qa-tab li').click(function () {
+			$('.aw-qa-tab li').removeClass('cur');
+			$(this).addClass('cur');
+			var action = $(this).attr('data-act');
+			url = G_BASE_URL + '/people/ajax/user_actions/uid' + '-' + G_USER_ID + '__actions\-'+action;
+			$('#ajaxList').empty();
+			flow.load({
+				elem: '#ajaxList', //指定列表容器
+				done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+					AWS.ajaxRequest(url, 'get', 'html', {page: page}, function (res) {
+						next(res, page < $($(res)[0]).attr('data-total'));
+					});
+				}
+			});
+			element.init();
+		});
+	});
+	$(".aw-qa-tab").find('li').eq(0).click();
+	$(window).scroll(function() {
+		if ($(document).scrollTop() >= 125) {
+			$("div.aw-qa-tab").addClass('aw-p-fix');
+		}
+		if ($(document).scrollTop() < 125) {
+			$("div.aw-qa-tab").removeClass('aw-p-fix');
+		}
+	});
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

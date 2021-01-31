@@ -1,0 +1,136 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<style>
+	.aw-trzx .aw-qa-tab ul li {
+		width: calc((100% - 1px)/5);
+	}
+	.aw-p-fix{top:0}
+</style>
+<div class="aw-trzx aw-gz aw-no-top">
+	<div class="aw-trzx-top"></div>
+	<div class="aw-trzx-tt clearfix">
+		<div class="other-top">
+			<img src="<?php echo get_avatar_url($this->user['uid'],'mid');?>" >
+			<div class="info">
+				<p>
+					<span><?php _e('威望');?> <?php _e($this->user['reputation']);?></span>
+					<span><?php _e('粉丝');?> <?php _e($this->user['fans_count']);?></span>
+					<span><?php _e('关注');?> <?php _e($this->user['friend_count']);?></span>
+					<span><?php _e('赞同');?> <?php _e($this->user['agree_count']);?></span>
+				</p>
+				<?php if($this->user['uid']==$this->user_id){ ?>
+				<a href="m/people/setting/"><?php _e('编辑资料');?></a>
+				<?php }else{ ?>
+				<div class="aw-trzx-ttd-b">
+					<a href="javascript:;" class="aw-trzx-ttd-fxx" onclick="AWS.dialog('inbox','<?php echo $this->user['user_name'];?>')"><img src="<?php echo G_STATIC_URL;?>/h5/img/fxx.png" >发消息</a>
+					<a href="javascript:;" class="aw-trzx-ttd-gzt <?php echo $this->user_follow_check ? 'disable' : '';?>" onclick="AWS.User.follow($(this),'user',<?php echo $this->user['uid'];?>);"><?php $this->user_follow_check ? _e('已关注') :'+ '. _e('关注'); ?></a>
+				</div>
+				<?php } ?>
+			</div>
+		</div>
+		<div class="aw-trzx-ttd">
+			<b><?php _e($this->user['user_name']);?></b>
+			<span><?php echo $this->user['signature'] ? $this->user['signature'] : '这个家伙太懒，什么都没有留下';?></span>
+		</div>
+	</div>
+	<div class="aw-qa-tab">
+		<ul>
+			<li data-act="201" class="cur"><a href="javascript:;">回答</a></li>
+			<li data-act="101"><a href="javascript:;">问题</a></li>
+			<li data-act="501"><a href="javascript:;">文章</a></li>
+			<li data-act="column"><a href="javascript:;">专栏</a></li>
+			<li data-act="more"><a href="javascript:;">更多</a></li>
+		</ul>
+	</div>
+	<div class="aw-qanda-list aw-focus-list" id="ajaxList"></div>
+	<div class="more-info" style="display: none">
+		<?php if(get_plugins_config('consult')['consult_plugin_enable'] == 'Y' && $this->user['consult_price']>0 && get_setting('consult_plugin_enable') == 'Y'){ ?>
+		<div class="consult-info aw-other-item">
+			<div class="mod-head"><?php _e('向TA付费咨询');?></div>
+			<div class="mod-body">
+				<p><?php _e('咨询价格');?> : <span style="color: red">￥<?php echo $this->user['consult_price'].'元/次'; ?></span></p>
+				<p><?php _e('专业介绍');?> : <?php echo $this->user['introduction'] ? $this->user['introduction'] : '暂未填写擅长专业'; ?></p>
+				<a href="javascript:;"  onclick="ask_people();" class="aw-trzx-ttd-gzt"><img src="<?php echo G_STATIC_URL;?>/h5/img/fxx.png" >咨询TA</a>
+			</div>
+		</div>
+		<?php } ?>
+
+		<?php if ($this->reputation_topics) { ?>
+		<div class="aw-other-item aw-topic-list">
+			<div class="mod-head"><?php _e('TA擅长的话题');?></div>
+			<div class="mod-body">
+				<ul>
+					<?php foreach ($this->reputation_topics AS $key => $val) { ?>
+					<li>
+						<span class="topic-tag">
+							<a href="topic/<?php echo $val['topic_id']; ?>" class="text" data-id="<?php echo $val['topic_id']; ?>"><?php echo $val['topic_title']; ?></a>
+						</span>
+						<span>
+							<i class="icon icon-agree"></i> <?php echo $val['agree_count']; ?>&nbsp;
+							<i class="icon icon-thank"></i> <?php echo $val['thanks_count']; ?>
+						</span>
+					</li>
+					<?php } ?>
+				</ul>
+			</div>
+		</div>
+		<?php } ?>
+	</div>
+</div>
+<script type="text/javascript">
+	var url;
+	var USER_ID = parseInt("<?php echo $_GET['id'];?>");
+	layui.use(['element', 'flow'], function () {
+		var element = layui.element;
+		var flow = layui.flow;
+		$('.aw-qa-tab li').click(function () {
+			$('.aw-qa-tab li').removeClass('cur');
+			$(this).addClass('cur');
+			var action = $(this).attr('data-act');
+			if(action=='more')
+			{
+				$('.more-info').show();
+				$('#ajaxList').empty();
+			}else if(action=='column'){
+				url = G_BASE_URL + "/m/ajax/get_user_column_list/uid\-"+ USER_ID;
+				getData(url)
+			}else{
+				url = G_BASE_URL + '/people/ajax/user_actions/uid' + '-' + USER_ID + '__actions\-'+action;
+				getData(url)
+			}
+
+			function getData(url)
+			{
+				$('.more-info').hide();
+				$('#ajaxList').empty();
+				flow.load({
+					elem: '#ajaxList', //指定列表容器
+					done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+						AWS.ajaxRequest(url, 'get', 'html', {page: page}, function (res) {
+							next(res, page < $($(res)[0]).attr('data-total'));
+						});
+					}
+				});
+			}
+			element.init();
+		});
+	});
+	$(".aw-qa-tab").find('li').eq(0).click();
+	function ask_people(){
+		var verified="<?php echo $this->user['verified']; ?>";
+		if(!verified){
+			layer.msg('该用户未认证，暂不能咨询！');
+			return false;
+		}
+		location.href="<?php echo get_plugins_url('consult','edit',['at_uid'=>$this->user['uid']]);?>";
+	}
+	$(window).scroll(function()
+	{
+		if ($(document).scrollTop() >= 155) {
+			$("div.aw-qa-tab").addClass('aw-p-fix');
+		}
+		if ($(document).scrollTop() < 155) {
+			$("div.aw-qa-tab").removeClass('aw-p-fix');
+		}
+	});
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

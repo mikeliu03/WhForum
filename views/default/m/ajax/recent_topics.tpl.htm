@@ -1,0 +1,10 @@
+<?php foreach($this->recent_topics as $key=>$val) { ?>
+<li class="clearfix" data-id="<?php echo $val['topic_id'];?>">
+    <img src="<?php echo get_topic_pic_url('mid', $val['topic_pic']); ?>" class="aw-tb-div-l">
+    <div class="aw-tb-div-c">
+        <b><?php echo $val['topic_title'];?></b>
+        <i class="aw-one-line"><?php _e('关注');?><?php echo $val['focus_count'];?> . <?php _e('讨论');?><?php echo $val['discuss_count'];?></i>
+    </div>
+    <button type="button" class="aw-wgz" data-title="<?php echo $val['topic_title'];?>" onclick="AWS.User.add_topic($(this),'<?php echo $val['topic_title'];?>','<?php echo $val['topic_id'];?>');">+ <?php _e('添加');?></button>
+</li>
+<?php } ?>

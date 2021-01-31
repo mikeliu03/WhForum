@@ -1,0 +1,57 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+    <div class="aw-top-divl">
+        <a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+    </div>
+    <span><?php _e('专栏列表');?></span>
+    <div class="aw-top-div">
+        <a href="m/column/apply/" class="aw-selectLabel-tr"><i class="iconfont iconfaqihuodong"></i><?php _e('申请');?></a>
+    </div>
+</div>
+<div class="aw-selectLabel">
+    <div class="aw-qa-tab">
+        <ul>
+            <li class="cur" data-sort="sum"><a href="javascript:;"><?php _e('最新');?></a></li>
+            <li data-sort="hot"><a href="javascript:;"><?php _e('热门');?></a></li>
+            <li data-sort="my"><a href="javascript:;"><?php _e('我的');?></a></li>
+        </ul>
+    </div>
+    <div class="aw-tb-div" style="border: none">
+        <ul id="ajaxList">
+
+        </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    layui.use(['element', 'flow'], function () {
+        var element = layui.element;
+        var flow = layui.flow;
+        $('.aw-qa-tab li').click(function () {
+            $('.aw-qa-tab li').removeClass('cur');
+            $(this).addClass('cur');
+            var sort = $(this).attr('data-sort');
+            var url = G_BASE_URL + '/column/ajax/list/sort' + '-' + sort;
+            $('#ajaxList').empty();
+            flow.load({
+                elem: '#ajaxList', //指定列表容器
+                done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                    AWS.ajaxRequest(url, 'get', 'html', {page: page}, function (res) {
+                        next(res, page < $($(res)[0]).attr('data-total'));
+                    });
+                }
+            });
+            element.init();
+        });
+    });
+    $(window).scroll(function()
+    {
+        if ($(document).scrollTop() >= 155) {
+            $("div.aw-qa-tab").addClass('aw-p-fix');
+        }
+        if ($(document).scrollTop() < 155) {
+            $("div.aw-qa-tab").removeClass('aw-p-fix');
+        }
+    });
+    $(".aw-qa-tab").find('li').eq(0).click();
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

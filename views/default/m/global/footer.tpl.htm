@@ -1,0 +1,168 @@
+<div id="aw-ajax-box"></div>
+<div style="display:none;" id="__crond">
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#__crond').html(unescape('%3Cimg%20src%3D%22' + G_BASE_URL + '/crond/run/<?php echo TIMESTAMP; ?>%22%20width%3D%221%22%20height%3D%221%22%20/%3E'));
+        });
+    </script>
+    <?php echo get_setting('statistic_code'); ?>
+</div>
+<!--底部公共注入钩子-->
+<?php run_hook('page_footer',['page'=>$_GET['app'],'platform'=>'mobile']);?>
+<!--end底部公共注入钩子-->
+<div class="aw-toast aw-toast-share" style="display: none">
+    <div class="aw-toast-hf">
+        <div class="aw-toast-title"><?php _e('分享到');?></div>
+        <div class="aw-common-share">
+            <dl onclick="call('wechatFriend')" class="wexin-browser">
+                <dt><i class="icon icon-wechat"></i></dt>
+                <dd><?php _e('微信好友');?></dd>
+            </dl>
+            <dl onclick="call('wechatTimeline')" class="wexin-browser">
+                <dt><i class="icon icon-wechat"></i></dt>
+                <dd><?php _e('朋友圈');?></dd>
+            </dl>
+            <dl onclick="call('qqFriend')">
+                <dt><i class="icon icon-qq"></i></dt>
+                <dd><?php _e('QQ');?></dd>
+            </dl>
+            <dl onclick="call('qZone')">
+                <dt><i class="icon icon-qzone"></i></dt>
+                <dd><?php _e('QQ空间');?></dd>
+            </dl>
+            <dl onclick="call('weibo')">
+                <dt><i class="icon icon-weibo"></i></dt>
+                <dd><?php _e('微博');?></dd>
+            </dl>
+        </div>
+    </div>
+    <div class="aw-bg"></div>
+</div>
+<!-- 侧边栏 -->
+<div class="aw-toast aw-common-nav" style="display: none">
+    <div class="aw-nav-toast ">
+        <div class="aw-nav-toast-top">
+            <a href="<?php echo base_url(); ?>">
+                <img src="<?php echo get_setting('loin_logo_url') ? get_setting('loin_logo_url') : '/static/css/default/img/login_logo.png';?>">
+            </a>
+            <i class="iconfont iconmianbaoxie-jiantou" onclick="$('.aw-toast').hide();"></i>
+        </div>
+        <div class="aw-nav-toast-cen">
+            <div class="aw-nav-toast-ct">
+            <?php if($this->user_id){ ?>
+                <a href="m/people/<?php echo $this->user_id;?>">
+                    <img src="<?php echo get_avatar_url($this->user_id,'mid');?>"><br>
+                </a>
+                <a href="m/people/<?php echo $this->user_id;?>"><?php echo $this->user_info['user_name'];?></a>
+            <?php }else{ ?>
+                <img src="/static/common/avatar-mid-img.png"><br>
+                <a href="m/account/login/"><span><?php _e('登录');?></span></a>
+                <a href="m/account/register/"><span><?php _e('注册');?></span></a>
+            <?php } ?>
+            </div>
+
+            <ul>
+            <?php foreach(array_slice($this->front_nav,0,get_setting('page_nav_num')) as $k=>$v):?>
+            <?php if($v['is_user']==0 && $v['status']=='Y' &&  $v['url']!='notifications' && explode('/',$v['url'])[0]!='feature' && explode('/',$v['url'])[0]!='page'):?>
+                <li>
+                    <a href="<?php echo $v['url'];?>/"<?php if ($_GET['app'] == $v['url']) { ?> class="active"<?php } ?>><i class="<?php echo $v['icon'];?>"></i> <?php _e($v['title']); ?></a>
+                </li>
+                <?php elseif($v['is_user']==0 && $v['status']=='Y' && (explode('/',$v['url'])[0]=='feature' || explode('/',$v['url'])[0]=='page')):?>
+                <li>
+                    <a href="<?php echo $v['url'];?>"<?php if ($_GET['app'] == explode('/',$v['url'])[0]) { ?> class="active"<?php } ?>><i class="<?php echo $v['icon'];?>"></i> <?php _e($v['title']); ?></a>
+                </li>
+                <?php elseif($v['is_user']==0 && $v['status']=='Y'  &&  $v['url']=='notifications' && !$this->user_id):?>
+                <li>
+                    <a href="<?php echo $v['url'];?>"<?php if ($_GET['app'] == $v['url'] ) { ?> class="active"<?php } ?>><i class="<?php echo $v['icon'];?>"></i> <?php _e($v['title']); ?></a>
+                </li>
+                <?php elseif( $v['status']=='Y' && $this->user_id):?>
+                <?php if($v['url']=='notifications'):?>
+                <li>
+                    <a href="notifications/" class="<?php if ($_GET['app'] == 'notifications') { ?>active<?php } ?>"><i class="icon icon-bell"></i> <?php _e('通知'); ?></a>
+                    <span class="badge badge-important" style="display:none" id="notifications_unread"><?php echo $this->user_info['notification_unread']; ?></span>
+                </li>
+                <?php else:?>
+                <li>
+                    <a href="<?php echo $v['url'];?>"<?php if ($_GET['app'] == $v['url'] ) { ?> class="active"<?php } ?>><i class="<?php echo $v['icon'];?>"></i> <?php _e($v['title']); ?></a>
+                </li>
+                <?php endif;?>
+                <?php endif;?>
+                <?php endforeach;?>
+                <!--自定义拓展模块入口钩子-->
+                <?php run_hook('m_extend_nav');?>
+                <!--自定义拓展模块入口钩子-->
+            </ul>
+        </div>
+
+        <div class="clearfix aw-nav-toast-b">
+            <a href="m/"><span><?php _e('返回首页');?></span></a>
+            <div>
+                <a href="m/people/setting/">
+                    <i class="iconfont iconshezhi"></i><span><?php _e('设置');?></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="aw-bg"></div>
+</div>
+<!-- 侧边栏 -->
+
+<script type="text/javascript">
+    $('.wexin-browser').hide();
+    if(browser.versions.weixin)
+    {
+        $('.wexin-browser').show();
+    }
+    var WEIXIN_IMG_COVER;
+    if ($('.aw-content img').length) 
+    {
+        WEIXIN_IMG_COVER = $('.aw-content img').first().attr('src');
+
+        if (WEIXIN_IMG_COVER.indexOf("http") < 0) 
+        {
+            WEIXIN_IMG_COVER = "<?php echo base_url();?>" + WEIXIN_IMG_COVER;
+        }
+    } else {
+        WEIXIN_IMG_COVER = '<?php echo get_setting("site_logo_url") ? get_setting("site_logo_url") : G_STATIC_URL."/common/weixin_default_cover.png";?>';
+    }
+    var nativeShare = new NativeShare();
+    nativeShare.setConfig({
+        wechatConfig: {
+            appId: '<?php echo get_setting("weixin_app_id"); ?>',
+            timestamp: '<?php echo TIMESTAMP; ?>',
+            nonceStr: '<?php echo $this->weixin_noncestr; ?>',
+            signature: '<?php echo $this->weixin_signature; ?>',
+        }
+    });
+    var shareData = {
+        title: document.title,
+        desc: $('meta[name="description"]').attr('content'),
+        link: location.href,
+        icon: WEIXIN_IMG_COVER,
+        success: function () {
+            layer.msg('分享成功')
+        },
+        fail: function () {
+            layer.msg('分享失败')
+        }
+    };
+    nativeShare.setShareData(shareData);
+    function call(command) 
+    {
+        try {
+        nativeShare.call(command)
+        } catch (err) {
+            layer.msg('分享调用出错,可能不支持当前浏览器调用分享')
+        }
+    }
+
+    function setTitle(title) 
+    {
+        nativeShare.setShareData({
+            title: title,
+        })
+    }
+</script>
+<?php TPL::output('global/debuger.tpl.htm'); ?>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<link rel="stylesheet" type="text/css" href="<?PHP echo $this->path;?>/style.css">
+<?php if($this->type=='all') {?>
+<ul class="aw-editor-checked">
+    <li class="active">Markdown</li>
+    <li>富文本</li>
+</ul>
+<?php } ?>
+<div class="aw-editor">
+    <div class="editor-type-md" >
+        <div id="editormd" style="z-index: 990;" ></div>
+    </div>
+    <div class="editor-type-rich" style="<?php if($this->type=='markdown' || $this->type=='all') {?> display: none; <?php } ?>width: 100%;">
+        <textarea style="display: none;" id="wangcontent" rows="15" name="<?php echo $this->param['name']; ?>"><?php echo $this->param['value']; ?></textarea>
+        <div id="wmd-input"></div>
+    </div>
+</div>
+<?php if($this->type=='markdown' || $this->type=='all') {?>
+<script type="text/javascript" charset="utf-8" src="<?PHP echo $this->path;?>/editormd/editormd.js"></script>
+<link rel="stylesheet" type="text/css" href="<?PHP echo $this->path;?>/editormd/css/editormd.css">
+<script type="text/javascript" charset="utf-8" src="<?PHP echo $this->path;?>/editormd/to-markdown.js"></script>
+<?php } ?>
+
+<?php if($this->type=='wangeditor' || $this->type=='all') {?>
+<script type="text/javascript" charset="utf-8" src="<?PHP echo $this->path;?>/wangeditor/release/wangEditor.js"></script>
+<script type="text/javascript" charset="utf-8" src="<?PHP echo $this->path;?>/wangeditor/release/wangEditor.js"></script>
+<script type="text/javascript" charset="utf-8" src="<?PHP echo $this->path;?>/wangeditor/release/wangEditorExt.js"></script>
+<script type="text/javascript" src="<?PHP echo $this->path;?>/wangeditor/plugin/attach/plugin.js"></script>
+<script type="text/javascript">
+    function CleanWord(html)
+    {
+        html = html.replace(/<xml>[\s\S]*?<\/xml>/ig, '');
+        html=html.replace(/<o:p>&nbsp;<\/o:p>/g,"");
+        html=html.replace(/o:/g,"");
+        html=html.replace(/<font>/g,"");
+        html=html.replace(/<FONT>/g,"");
+        html=html.replace(/<span>/g,"");
+        html=html.replace(/<SPAN>/g,"");
+        html=html.replace(/<SPANlang=EN-US>/g,"");
+        html=html.replace(/<P>/g,"");
+        html=html.replace(/<\/P>/g,"");
+        html=html.replace(/<\/SPAN>/g,"");
+        html=html.replace(/<([a-z]+?)(?:\s+?[^>]*?)?>\s*?<\/\1>/ig,'');
+        return  html;
+    }
+
+    function autoLink(html){
+        var reg = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/g;
+        var imgSRC = $($(html)).find('img').attr('src');
+        var aHref= $($(html)).find('a').attr('href');
+        if(reg.exec(imgSRC) || reg.exec(aHref)){
+            return html;
+        }else{
+            return html.replace(reg,function(m){return '<a href="'+m+'" target="_blank"  rel="nofollow">'+m+'</a>';})
+        }
+    }
+</script>
+<script type="text/javascript">
+    var upload_ass="<?php echo $this->user_info['permission']['upload_attach'];?>";
+    var E = window.wangEditor;
+    var $text1 = $('#wangcontent');
+    var content=$text1.val();
+    var editor = new E('#wmd-input');
+    editor.customConfig.codeType={
+        title:"选择代码类型:",
+        type:[
+            "Bash/Shell","C/C++","Php","C#","Java","Css","Sql","Html"
+        ]
+    };
+    editor.customConfig.uploadImgServer = "<?php echo get_plugins_url('editor','upload_file',['cat'=>$this->param['cat']]);?>";
+    editor.customConfig.onchangeTimeout = 1;
+    editor.customConfig.uploadImgTimeout = <?php echo $this->config['timeout']['value'];?>;
+    editor.customConfig.uploadImgMaxSize = <?php echo $this->config['fileMaxSize']['value'];?>*1024*1024;
+    editor.customConfig.uploadFileName = 'upload';
+    editor.customConfig.uploadImgHooks = {
+        fail: function (xhr, editor, result) {
+            if(result.error){
+                layer.msg(result.msg);
+                return false;
+            }
+        },
+        error: function error(xhr, editor) {
+        },
+    };
+    editor.customConfig.uploadVideoServer = "<?php echo get_plugins_url('editor','upload_video',['cat'=>$this->param['cat'],'attach_access_key'=>$this->param['attach_access_key']]);?>";
+    editor.customConfig.uploadVideoHooks = {
+        customInsert: function (insertVideo, result) {
+            if (result.errno === 0) {
+                insertVideo(result.data);
+            } else {
+                layer.msg(result.msg);
+            }
+        }
+    };
+
+    editor.customConfig.onchange = function (html)
+    {
+        //html = autoLink(html);
+        $text1.val(html);
+        $(".aw-editor").removeClass('mkd').addClass('htm');
+    };
+    editor.customConfig.pasteFilterStyle = false;
+    editor.customConfig.pasteIgnoreImg = false;
+    editor.customConfig.pasteTextHandle = function (content)
+    {
+        if (content == '' && !content) return '';
+        return  CleanWord(content);
+    };
+    editor.create();
+    editor.txt.html(content);
+    E.attach.init('#wmd-input',"<?php echo $this->param['cat']?>");
+    E.fullscreen.init(editor);
+    /*E.viewSource.init(editor);*/
+</script>
+<?php } ?>
+
+<?php if($this->type=='all' || $this->type=='markdown') {?>
+<script type="text/javascript">
+    var testEditor;
+    $(function() {
+        $("ul.aw-editor-checked>li").click(function()
+        {
+            var index= $(this).index();
+            $(this).addClass('active').siblings().removeClass('active');
+            if(index==1){
+                $(".editor-type-rich").show();
+                $(".editor-type-md").hide();
+                if($(".aw-editor").hasClass('mkd')){
+                    editor.txt.html($(".editormd-html-textarea").val());
+                }
+            }else{
+                $(".editor-type-rich").hide();
+                $(".editor-type-md").show();
+                if($(".aw-editor").hasClass('htm')){
+                    testEditor.setMarkdown(toMarkdown(editor.txt.html()));
+                }
+            }
+        });
+    });
+    testEditor = editormd("editormd", {
+        width: "100%",
+        height: 500,
+        path : '<?PHP echo $this->path;?>/editormd/lib/',
+        theme : "default",
+        previewTheme : "default",
+        editorTheme : editormd.editorThemes['theme-name'],
+        markdown : $('#wangcontent').val(),
+        codeFold : false,
+        tabSize: 6,
+        saveHTMLToTextarea : true,    // 保存 HTML 到 Textarea
+        searchReplace : false,
+        htmlDecode : "style,script,iframe|on*",            // 开启 HTML 标签解析，为了安全性，默认不开启
+        emoji : true,
+        taskList : true,
+        tocm : true,         // Using [TOCM]
+        placeholder:'请输入内容',
+        tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+        flowChart : true,             // 开启流程图支持，默认关闭
+        sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
+        toolbarIcons : function()
+        {
+            return ["undo", "redo", "|", "bold", "hr", "h1", "h2", "h3", "h4", "h5", "h6", "quote","italic","del","datetime", "image", "|", "link", "list-ul",  "list-ol","||","fullscreen"]
+        },
+        imageUpload : true,
+        imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+        imageUploadURL :"<?php echo get_plugins_url('editor','upload_mkfile',['cat'=>$this->param['cat']]);?>",
+        onload:function(){},
+        onchange : function() {
+            $(".aw-editor").removeClass('htm').addClass('mkd');
+            $("#wangcontent").val(this.getHTML());
+        }
+    });
+</script>
+<?php } ?>

@@ -1,0 +1,23 @@
+<?php if ($this->drafts) { ?>
+<?php foreach ($this->drafts AS $key => $val) { ?>
+<li class="aw-drat-item">
+	<div class="mod-body">
+		<h2 class="aw-one-line">
+			<a href="<?php echo $val['url']; ?>"><?php echo $val['title']; ?></a>
+		</h2>
+		<p class="aw-two-line"><?php echo $val['data']['message']; ?></p>
+	</div>
+	<div class="mod-footer active">
+		<span><?php _e('保存于');?><?php echo date_friendly($val['time'], 604800, 'Y-m-d'); ?></span>
+		<div class="draft-op">
+			<a href="<?php echo $val['url']; ?>"><i class="icon icon-edit"></i> <?php _e('编辑'); ?></a>
+			<a onclick="AWS.User.delete_draft('<?php echo $val['type'];?>','<?php echo $val['item_id'];?>')"> <i class="iconfont iconshanchu-xian"></i><?php _e('删除'); ?></a>
+		</div>
+	</div>
+</li>
+<?php } ?>
+<?php } else { ?>
+<p class="text-center text-color-999" style="padding: 30px 0">
+	<img src="/static/h5/img/no_conetnt.png" width="70%"><br>
+</p>
+<?php } ?>

@@ -1,0 +1,120 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<style>
+    .aw-topic-tab ul li {
+        height: 46px;
+        line-height: 46px;
+        width: calc(100%/5);
+        text-align: center;
+        float: left;
+    }
+</style>
+<div class="aw-top">
+    <div class="aw-top-divl">
+        <a href="javascript:;" onclick="window.history.back(-1);">
+            <img class="aw-top-back" src="<?php echo G_STATIC_URL;?>/h5/img/back.png">
+        </a>
+    </div>
+    <span><?php _e('话题详情');?></span>
+    <div class="aw-top-div">
+        <a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+    </div>
+</div>
+<div class="aw-tzlb aw-padding">
+    <div class="aw-tb-div aw-tzlb-div">
+        <div class="clearfix">
+            <img src="<?php echo get_topic_pic_url('mid', $this->topic_info['topic_pic']); ?>" class="aw-tb-div-l">
+            <div class="aw-tb-div-c">
+                <b class="aw-one-line"><?php _e($this->topic_info['topic_title']); ?></b>
+                <span>关注:<?php echo $this->topic_info['focus_count']; ?> 讨论:<?php echo $this->topic_info['discuss_count']; ?></span>
+                <div class="aw-two-line">
+                    <?php if ($this->topic_info['topic_description']) { ?>
+                    <?php _e(cjk_substr(strip_tags($this->topic_info['topic_description']), 0, 128, 'UTF-8', '... &nbsp; <a href="javascript:;" onclick="$(\'#i_about\').click()">查看全部</a>')); ?>
+                    <?php } ?>
+                </div>
+            </div>
+            <?php if ($this->user_id) { ?>
+            <button type="button" class="aw-wgz <?php echo $this->topic_info['has_focus'] ? 'disable' : '';?>" onclick="AWS.User.follow($(this), 'topic', <?php echo $this->topic_info['topic_id']; ?>);">
+                <?php if ($this->topic_info['has_focus']) { ?><?php _e('已关注'); ?><?php } else { ?><?php _e('+ 关注'); ?><?php } ?>
+            </button>
+            <?php } ?>
+        </div>
+    </div>
+    <div class="aw-qa-tab aw-topic-tab">
+        <ul>
+            <li class="cur" data-sort="best"><a href="javascript:;"><?php _e('精华');?></a></li>
+            <li data-sort="question"><a href="javascript:;"><?php _e('问题');?></a></li>
+            <li data-sort="article"><a href="javascript:;"><?php _e('文章');?></a></li>
+            <li data-sort="recommend"><a href="javascript:;"><?php _e('推荐');?></a></li>
+            <li data-sort="intro"><a href="javascript:;"><?php _e('介绍');?></a></li>
+        </ul>
+    </div>
+    <div class="aw-qanda-list" id="ajaxList">
+
+    </div>
+    <div class="aw-content" style="display: none;padding: 10px">
+        <?php _e($this->topic_info['topic_description']);?>
+    </div>
+</div>
+<script>
+    var TOPIC_ID = parseInt("<?php echo intval($this->topic_info['topic_id']); ?>");
+    layui.use(['element', 'flow'], function () {
+        var element = layui.element;
+        var flow = layui.flow;
+        var url;
+        $('.aw-qa-tab li').click(function () {
+            $('.aw-qa-tab li').removeClass('cur');
+            $(this).addClass('cur');
+            var sort_type = $(this).attr('data-sort');
+            switch (sort_type) {
+                case 'recommend':
+                    url = G_BASE_URL + '/explore/ajax/list/sort_type-new__is_recommend\-1__topic_id\-' + TOPIC_ID;
+                    showData(url);
+                    break;
+                case 'best':
+                    url = G_BASE_URL + '/explore/ajax/list/type-best__topic_id\-' + TOPIC_ID;
+                    showData(url);
+                    break;
+                case 'question':
+                    url = G_BASE_URL + '/explore/ajax/list/post_type\-question__sort_type-new__topic_id\-' + TOPIC_ID;
+                    showData(url);
+                    break;
+                case 'article':
+                    url = G_BASE_URL + '/explore/ajax/list/post_type\-article__sort_type-new__topic_id\-' + TOPIC_ID;
+                    showData(url);
+                    break;
+                case 'intro':
+                    $('#ajaxList').empty();
+                    $('.aw-content').show();
+                    break;
+            }
+        });
+
+        function showData(url) {
+            $('#ajaxList').empty();
+            $('.aw-content').hide();
+            flow.load({
+                elem: '#ajaxList', //指定列表容器
+                done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                    AWS.ajaxRequest(url, 'get', 'html', {page: page}, function (res) {
+                        next(res, page < $($(res)[0]).attr('data-total'));
+                    });
+                }
+            });
+            element.init();
+
+            flyLoad();
+        }
+    });
+    $(".aw-qa-tab").find('li').eq(0).click();
+    $(window).scroll(function()
+    {
+        if ($(document).scrollTop() >= 155) {
+            $("div.aw-qa-tab").addClass('aw-p-fix');
+        }
+        if ($(document).scrollTop() < 155) {
+            $("div.aw-qa-tab").removeClass('aw-p-fix');
+        }
+    });
+
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

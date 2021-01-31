@@ -1,0 +1,15 @@
+<script type="text/javascript">
+    $('#submitBtn').click(function(){
+            var html = zxEditor.getContent();
+            $('#edit-content').val(html);
+            $('.anonymous').val(0);
+            AWS.ajax_post('#publishForm');
+        }
+    );
+    $('#anonymousBtn').click(function(){
+            var html = zxEditor.getContent();
+            $('#edit-content').val(html);
+            AWS.ajax_post('#publishForm');
+        }
+    );
+</script>

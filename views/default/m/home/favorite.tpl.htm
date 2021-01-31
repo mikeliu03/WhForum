@@ -1,0 +1,75 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+    <div class="aw-top-divl">
+        <a href="javascript:;" onclick="window.history.back(-1);">
+            <img class="aw-top-back" src="<?php echo G_STATIC_URL;?>/h5/img/back.png">
+        </a>
+    </div>
+    <span><?php _e('我的收藏');?></span>
+    <div class="aw-top-div">
+        <a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+    </div>
+</div>
+<div class="aw-tzlb">
+    <div class="wrapper aw-category-select" id="category">
+        <div class="scroller">
+            <ul class="clearfix">
+                <li class="text <?php if(!$_GET['tag']){echo 'cur';} ?>" data-tag=""><a href="javascript:;"><?php _e('全部');?></a></li>
+                <?php if (sizeof($this->favorite_tags) > 0) { ?>
+                <?php foreach ($this->favorite_tags AS $key => $val) { ?>
+                <?php if ($val['title']) { ?>
+                <li class="<?php if($_GET['tag'] && $_GET['tag']==$val['title']){echo 'cur';} ?> text" data-tag="<?php echo urlencode($val['title']); ?>"><a href="javascript:;" class="text"><?php echo $val['title']; ?></a></li>
+                <?php } ?>
+                <?php } ?>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
+    <div class="aw-tb-div " style="border: none">
+        <ul class="aw-qanda-list" id="ajaxList">
+
+        </ul>
+    </div>
+</div>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/flexible.js"></script>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/iscroll.js"></script>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/navbarscroll.js"></script>
+<script type="text/javascript">
+    var TAG ='',url;
+    $('.wrapper').navbarscroll();
+    layui.use(['element', 'flow'], function () {
+        var element = layui.element;
+        var flow = layui.flow;
+        $('#category').navbarscroll({
+            endClickScroll:function(obj){
+                TAG = obj.attr('data-tag');
+                url = G_BASE_URL + '/m/ajax/favorite_list/tag\-'+ TAG;
+                getData(url);
+            }
+        });
+
+        function getData(url)
+        {
+            $('#ajaxList').empty();
+            flow.load({
+                elem: '#ajaxList', //指定列表容器
+                done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                    AWS.ajaxRequest(url, 'get', 'html', {page: page}, function (res) {
+                        next(res, page < $($(res)[0]).attr('data-total'));
+                    });
+                }
+            });
+        }
+        element.init();
+    });
+    $(window).scroll(function()
+    {
+        if ($(document).scrollTop() >= 155) {
+            $("div.aw-qa-tab").addClass('aw-p-fix');
+        }
+        if ($(document).scrollTop() < 155) {
+            $("div.aw-qa-tab").removeClass('aw-p-fix');
+        }
+    });
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

@@ -1,0 +1,81 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+    <div class="aw-top-divl">
+        <a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+    </div>
+    <span><?php _e('活动详情');?></span>
+</div>
+<div class="aw-tzxq aw-hdxq">
+    <img class="aw-xsxq-title-top" src="<?php echo get_setting('upload_url'); ?>/project/<?php echo $this->project_info['id']; ?>_main.jpg?<php echo rand(1,100);?>" >
+    <p class="aw-xsxq-title aw-hdxq-title"><?php echo $this->project_info['title']; ?></p>
+
+    <div class="aw-hdxq-top">
+        <ul>
+            <li><img src="<?php echo G_STATIC_URL;?>/h5/img/icon/hd.png"><?php echo date('Y年m月d日',$this->project_info['start_time']); ?> - <?php echo date('Y年m月d日',$this->project_info['end_time']); ?></li>
+            <li><img src="<?php echo G_STATIC_URL;?>/h5/img/hddz.png"><?php echo $this->project_info['province'].$this->project_info['city'];?></li>
+            <li><img src="<?php echo G_STATIC_URL;?>/h5/img/xq2.png">进行中</li>
+            <li><img src="<?php echo G_STATIC_URL;?>/h5/img/icon/my.png"><?php _e('已报名');?>：<?php echo intval($this->project_info['paid']).'/'.intval($this->project_info['amount']); ?>人</li>
+        </ul>
+    </div>
+    <div class="aw-xsxq-zz  aw-hdxq-zz">
+        <span class="aw-hdxq-zz-t"><?php _e('活动发起人');?></span>
+        <div class="clearfix aw-hdxq-zz-b aw-xsxq-zz">
+            <a href="people/<?php echo $this->project_info['user_info']['uid']; ?>">
+                <img src="<?php echo get_avatar_url($this->project_info['uid'], 'mid'); ?>"/>
+            </a>
+            <div class="aw-xsxq-zz-d">
+                <p><a href="people/<?php echo $this->project_info['user_info']['uid']; ?>"><?php echo $this->project_info['user_info']['user_name']; ?></a></p>
+                <span><?php _e('关注');?>:<?php echo $this->project_info['user_info']['friend_count']; ?> <?php _e('粉丝');?>:<?php echo $this->project_info['user_info']['fans_count']; ?></span>
+            </div>
+            <?php if($this->user_id && $this->user_id != $this->project_info['uid']) { ?>
+            <button type="button" onclick="AWS.User.follow($(this),'user',<?php echo $this->project_info['uid'];?>);" class="<?php echo $this->user_follow_check ? 'disable' : '';?>">
+                <?php $this->user_follow_check ? _e('已关注') : '+ '._e('关注'); ?>
+            </button>
+            <?php } ?>
+        </div>
+    </div>
+    <div class=" aw-hdxq-xq">
+        <b><?php _e('活动详情');?></b>
+        <div class="aw-content">
+            <?php echo $this->project_info['description']; ?>
+		</div>
+    </div>
+    <!--<div class="aw-xsxq-hf">
+        <div class="aw-xsxq-hft aw-line clearfix">
+            <b>活动评价</b>
+        </div>
+        <div class="aw-xsxq-hfb aw-hdxq-hfb aw-lineo">
+            <div class="aw-x-h-t clearfix">
+                <div class="aw-x-h-tl">
+                    <img src="<?php echo G_STATIC_URL;?>'/h5/img/'hdwt.png">
+                    <div class="aw-x-h-tr">
+                        <span>薇薇安</span>
+                        <i>13分钟前</i>
+                        <p class="aw-x-h-c">在单车自由流动的情况下，它们总是会流动到容易出行且人流量。 </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="aw-xsxq-hfb aw-hdxq-hfb aw-lineo">
+            <div class="aw-x-h-t clearfix">
+                <div class="aw-x-h-tl">
+                    <img src="<?php echo G_STATIC_URL;?>'/h5/img/'hdwt.png">
+                    <div class="aw-x-h-tr">
+                        <span>薇薇安</span>
+                        <i>13分钟前</i>
+                        <p class="aw-x-h-c">在单车自由流动的情况下，它们总是会流动到容易出行且人流量。 </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+</div>
+<div class="aw-hdxq-b">
+    <div class="aw-hdxq-b-pl">
+        <i class="icon icon-comment"></i> <?php _e('评论');?>
+    </div>
+    <div class="aw-hdxq-b-bm">
+        <i class="icon icon-edit"></i> <?php _e('立即报名');?>
+    </div>
+</div>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

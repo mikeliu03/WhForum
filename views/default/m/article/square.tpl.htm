@@ -1,0 +1,98 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+    <div class="aw-top-divl">
+        <a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+    </div>
+    <span><?php _e('文章列表');?></span>
+    <div class="aw-top-div">
+        <a href="m/publish/article/" class="aw-selectLabel-tr"><i class="iconfont iconfaqihuodong"></i><?php _e('发表');?></a>
+    </div>
+</div>
+<div class="aw-qanda aw-padding">
+    <?php if ($this->content_nav_menu && get_setting('category_enable')=='Y') { ?>
+    <div class="wrapper aw-category-select" id="category">
+        <div class="scroller">
+            <ul class="clearfix">
+                <?php if(get_setting('category_display_mode')=='list'){ ?>
+                <li class="text <?php if(!$_GET['category']){echo 'cur';} ?>" data-id="0">
+                    <a href="javascript:;"><?php _e('全部');?></a>
+                </li>
+                <?php } ?>
+                <?php foreach ($this->content_nav_menu as $key => $val) { ?>
+                <?php if ($val['title']) { ?>
+                <li class="<?php if($_GET['category'] && $_GET['category']==$val['type_id']){echo 'cur';} ?> <?php echo get_setting('category_display_mode')!='list' ? 'image' : 'text'; ?>" data-id="<?php echo $val['type_id'];?>" <?php if($val['type']=='custom'){ ?> onclick="window.location.href = '<?php echo $val['link'];?>';" <?php } ?>>
+                <?php if(get_setting('category_display_mode')!='list'){ ?>
+                <img src="<?php if($val['icon']){ echo get_setting('upload_url'); ?>/nav_menu/<?php echo $val['icon']; ?><?php } else { ?><?php echo G_STATIC_URL; ?>/css/<?php echo $this->template_name; ?>/img/default_class_imgs.png<?php } ?>"/>
+                <?php } ?>
+                <a href="javascript:;"><?php echo $val['title']; ?></a>
+                </li>
+                <?php } ?>
+                <?php } ?>
+            </ul>
+        </div>
+    </div>
+    <?php } ?>
+    <div class="aw-qa-tab">
+        <ul>
+            <li class="cur" data-sort="new"><a href="javascript:;"><?php _e('最新');?></a></li>
+            <li data-sort="hot"><a href="javascript:;"><?php _e('热门');?></a></li>
+            <li data-sort="is_recommend"><a href="javascript:;"><?php _e('推荐');?></a></li>
+        </ul>
+    </div>
+    <div class="aw-qanda-list" id="ajaxList">
+
+    </div>
+</div>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/flexible.js"></script>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/iscroll.js"></script>
+<script type="text/javascript" src="<?php echo G_STATIC_URL;?>/h5/js/navbarscroll.js"></script>
+<script type="text/javascript">
+    var CATEGORY_ID = 0;
+    $('.wrapper').navbarscroll();
+    $('#category').navbarscroll({
+        endClickScroll:function(obj){
+            CATEGORY_ID = obj.attr('data-id');
+            $(".aw-qa-tab").find('li').eq(0).click();
+        }
+    });
+    var url = G_BASE_URL + '/explore/ajax/list/post_type-article__sort_type-new__category-'+CATEGORY_ID;
+    layui.use(['element', 'flow'], function () {
+        var element = layui.element;
+        var flow = layui.flow;
+        $('.aw-qa-tab li').click(function () {
+            $('.aw-qa-tab li').removeClass('cur');
+            $(this).addClass('cur');
+            var sort_type = $(this).attr('data-sort');
+            if(sort_type=='is_recommend')
+            {
+                url = G_BASE_URL + '/explore/ajax/list/post_type\-article__is_recommend\-1' + '__category\-' + CATEGORY_ID;
+            }else{
+                url = G_BASE_URL + '/explore/ajax/list/post_type\-article__sort_type\-' + sort_type + '__category\-' + CATEGORY_ID;
+            }
+            $('#ajaxList').empty();
+            flow.load({
+                elem: '#ajaxList', //指定列表容器
+                done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                    AWS.ajaxRequest(url, 'get', 'html', {page: page}, function (res) {
+                        next(res, page < $($(res)[0]).attr('data-total'));
+                    });
+                }
+            });
+            element.init();
+        });
+    });
+    $(".aw-qa-tab").find('li').eq(0).click();
+    $(window).scroll(function()
+    {
+        if ($(document).scrollTop() >= 155) {
+            $("div.aw-qa-tab").addClass('aw-p-fix');
+        }
+        if ($(document).scrollTop() < 155) {
+            $("div.aw-qa-tab").removeClass('aw-p-fix');
+        }
+    });
+    $('#search_form').bind('keypress', function(event) {
+        $('#search_form').submit();
+    });
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

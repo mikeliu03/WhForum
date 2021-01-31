@@ -1,0 +1,69 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+    <div class="aw-top-divl">
+        <a href="<?php echo base_url();?>">
+            <i class="iconfont iconshouye" style="color: #999"></i>
+        </a>
+    </div>
+    <span><?php _e('登录');?></span>
+    <div class="aw-top-div">
+        <a href="m/account/register/" class="aw-selectLabel-tr"><?php _e('注册');?></a>
+    </div>
+</div>
+<div class="aw-sy aw-padding">
+    <div class="aw-site-logo">
+        <a href="<?php echo base_url();?>">
+            <img src="<?php echo get_setting('login_logo_url') ? get_setting('login_logo_url') : '/static/css/default/img/login_logo.png';?>" >
+        </a>
+    </div>
+    <div class="aw-login-box">
+        <form id="login_form" method="post" onsubmit="return false;" action="account/ajax/login_process/">
+            <ul>
+                <li>
+                    <input name="user_name" type="text" class="name" placeholder="<?php echo (get_hook_config('mobile_regist')['login_type']['value']=='double' and get_hook_info('mobile_regist')['state']==1 )?'邮箱/手机号/':(get_hook_config('mobile_regist')['login_type']['value']=='mobile'?'手机号/':'邮箱/');?><?php _e('用户名'); ?>">
+                </li>
+                <li>
+                    <input type="password" class="pass" placeholder="请输入密码" onkeydown="if (event.keyCode == 13) {$('#aw-login-user-repassword').val(encrypt_pass($('.pass').val())); AWS.ajax_post($('#login_form')); }">
+                    <input id="aw-login-user-repassword" type="hidden" name="password"/>
+                </li>
+            </ul>
+            <span class="loginbut">
+                <input name="" type="button" value="登 录" onclick="$('#aw-login-user-repassword').val(encrypt_pass($('.pass').val()));AWS.ajax_post($('#login_form'));">
+            </span>
+            <span class="otherinfo clearfix">
+                <a href="m/account/register/" class="clickreg"><?php _e('点击注册');?></a>
+                <a href="javascript:;">|</a>
+                <a href="m/" class="youk"><?php _e('游客访问');?></a>
+                <a href="javascript:;">|</a>
+                <a href="m/account/find_password/" class="findpass"><?php _e('找回密码');?></a>
+            </span>
+            <?php if (get_setting('sina_weibo_enabled') == 'Y' || get_setting('qq_login_enabled') == 'Y') { ?>
+            <div class="login-user-method">
+                <div class="login-user-method-box">
+                    <div role="separator" class="van-divider van-divider--hairline van-divider--content-center"><?php _e('其他登录方式');?>
+                    </div>
+                </div>
+                <div class="login-user-method-icon">
+                    <ul>
+                        <?php if (get_setting('sina_weibo_enabled') == 'Y') { ?>
+                        <li>
+                            <a href="<?php echo get_web_url().'/account/openid/weibo/bind/';?>">
+                                <img src="<?php echo G_STATIC_URL; ?>/mobile/images/wb.png">
+                            </a>
+                        </li>
+                        <?php } ?>
+                        <?php if (get_setting('qq_login_enabled') == 'Y') { ?>
+                        <li>
+                            <a href="<?php echo get_web_url().'/account/openid/qq/bind/';?>">
+                                <img src="<?php echo G_STATIC_URL; ?>/mobile/images/wx.png">
+                            </a>
+                        </li>
+                        <?php } ?>
+                    </ul>
+                </div>
+            </div>
+            <?php } ?>
+        </form>
+    </div>
+</div>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

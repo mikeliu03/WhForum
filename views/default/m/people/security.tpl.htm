@@ -1,0 +1,47 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+	<div class="aw-top-divl">
+		<a href="javascript:;" onclick="window.history.back(-1);">
+			<img class="aw-top-back" src="<?php echo G_STATIC_URL;?>/h5/img/back.png">
+		</a>
+	</div>
+	<span><?php _e('安全设置');?></span>
+	<div class="aw-top-div">
+		<a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+	</div>
+</div>
+<div class="aw-yqhd aw-zhsz">
+	<div class="aw-my-list">
+		<div class="form-item">
+			<label><?php _e('手机');?></label>
+			<span onclick="window.location.href=G_BASE_URL+'/m/people/modify_mobile/';"><?php echo $this->user_info['mobile'] ? substr_replace($this->user_info['mobile'], '****', 3, 4) : '暂未绑定手机号';?></span>
+			<a href="m/people/modify_mobile/">
+				<img src="<?php echo G_STATIC_URL;?>/h5/img/gd.png">
+			</a>
+		</div>
+		<div class="form-item">
+			<label><?php _e('邮箱');?></label>
+			<span><?php echo $this->user_info['email'] ? $this->user_info['email'] : '暂未绑定邮箱';?></span>
+			<!--<a href="m/people/modify_email/">
+				<img src="<?php echo G_STATIC_URL;?>/h5/img/gd.png">
+			</a>-->
+		</div>
+		<div class="form-item">
+			<label><?php _e('密码');?></label>
+			<span onclick="window.location.href=G_BASE_URL+'/m/people/modify_password/';"><?php _e('点击修改密码');?></span>
+			<a href="m/people/modify_password/">
+				<img src="<?php echo G_STATIC_URL;?>/h5/img/gd.png">
+			</a>
+		</div>
+		<?php if(get_setting('payment')=='Y'){ ?>
+		<div class="form-item">
+			<label><?php _e('交易密码');?></label>
+			<span onclick="window.location.href=G_BASE_URL+'/m/people/trade/';"><?php _e('点击修改交易密码');?></span>
+			<a href="m/people/trade/">
+				<img src="<?php echo G_STATIC_URL;?>/h5/img/gd.png">
+			</a>
+		</div>
+		<?php } ?>
+	</div>
+</div>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

@@ -1,0 +1,3 @@
+INSERT INTO `[#DB_PREFIX#]system_setting`(`varname`, `value`) VALUES ('system_lang', 's:0:"";');
+INSERT INTO `[#DB_PREFIX#]hook`(`system`, `name`, `intro`, `source`, `status`, `add_time`, `update_time`) VALUES (1, 'login_hook', '登陆页面钩子', 'system', 1, 1583844198, 0);
+INSERT INTO `[#DB_PREFIX#]hook`(`system`, `name`, `intro`, `source`, `status`, `add_time`, `update_time`) VALUES (1, 'register_hook', '注册页面钩子', 'system', 1, 1583844198, 0);

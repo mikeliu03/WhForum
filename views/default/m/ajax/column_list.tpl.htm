@@ -1,0 +1,36 @@
+<?php if($this->column_info) { ?>
+<?php foreach($this->column_info as $key=>$column) { ?>
+<li class="clearfix column-item" data-total="<?php echo $this->total;?>">
+    <a href="column/details/<?php echo $column['column_id']; ?>">
+        <img src="<?php echo $column['column_pic']; ?>" class="aw-tb-div-l">
+    </a>
+    <div class="aw-tb-div-c">
+        <b class="aw-one-line">
+            <a href="column/details/<?php echo $column['column_id'];?>">
+                <?php echo $column['column_name']; ?>
+            </a>
+        </b>
+        <span><?php _e('浏览');?>:<?php echo num2tring(round($column['views_count'])); ?> <?php _e('文章');?>:<?php echo num2tring(round($column['article_count'])); ?></span>
+        <i class="aw-one-line"><?php echo $column['column_description']; ?></i>
+    </div>
+
+    <?php if($_GET['sort']=='my') { ?>
+    <div class="aw-column-status">
+        <?php if($column['is_verify']==1) { ?>
+        <i class="iconfont iconyishenhe ok"></i> <?php _e('审核通过');?>
+        <?php } else if($column['is_verify']==-1){?>
+        <i class="iconfont iconshenhebutongguo no"></i> <?php _e('审核拒绝');?>
+        <?php }else{ ?>
+        <i class="iconfont iconshenhezhong wait"></i> <?php _e('等待审核');?>
+        <?php } ?>
+    </div>
+    <?php } ?>
+
+    <?php if($column['uid'] != $this->user_id && $this->user_id){ ?>
+    <button type="button" class="aw-wgz <?php echo $column['has_focus_column'] ? 'disable' : '';?>" onclick="AWS.User.focus_column($(this), <?php echo $column['column_id']; ?>);">
+        <?php echo $column['has_focus_column'] ? '已关注' : '+ 关注';?>
+    </button>
+    <?php } ?>
+</li>
+<?php } ?>
+<?php } ?>

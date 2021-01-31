@@ -1,0 +1,47 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<form action="column/ajax/<?php echo $this->column['column_id'] ? 'edit_apply' : 'apply'; ?>/" method="post" id="question_form" onsubmit="return false;">
+    <input type="hidden" name="post_hash" value="<?php echo new_post_hash() ?>">
+    <input type="hidden" name="logo_img" value="<?php echo $this->column['column_pic']?$this->column['column_pic']:''; ?>">
+    <input type="hidden" name="id" value="<?php echo $this->column['column_id'] ?>">
+    <div class="aw-top">
+        <div class="aw-top-divl">
+            <a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+        </div>
+        <span><?php _e('申请专栏');?></span>
+        <div class="aw-top-div">
+            <a href="javascript:;" onclick="AWS.ajax_post('#question_form')"  class="aw-top-fb"><?php _e('提交');?></a>
+        </div>
+    </div>
+    <div class="aw-tzlb">
+        <div class="aw-fbtz-input aw-fbwt-input">
+            <input type="text"  placeholder="请输入专栏名称" class="aw-pl-ys" name="name"  value="<?php echo $this->column['column_name'] ?>"/>
+        </div>
+
+        <div class="aw-fbwt-xswt" style="height: auto">
+            <div class="aw-editor" >
+            <textarea  name="description" style="width: 100%;border: none;margin-top: 10px;" cols="" rows="4" placeholder="请输入专栏介绍(60字内)"><?php echo $this->column['column_description'] ?></textarea>
+            </div>
+        </div>
+
+        <div class="aw-publish-bottom">
+            <?php if (get_setting('upload_enable') == 'Y') { ?>
+            <div class="publish-item article-img">
+                <label><?php _e('封面');?></label>
+                <div class="info">
+                    <a class="btn btn-mini btn-success" id="logo_uploader" href="javascript:;">
+                        <img src="<?php echo $this->column['column_pic']?$this->column['column_pic']:G_STATIC_URL.'/css/default/img/default-cover.jpg'?>" id="logo_img">
+                    </a>
+                </div>
+            </div>
+            <?php } ?>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        var fileUpload = new FileUpload('avatar', $('#logo_uploader'), $('#logo_img'), G_BASE_URL + '/column/ajax/logo_upload/', {loading_status: '#logo_uploading_status',accept:'image/*'},function () {
+            $('input[name="logo_img"]').val($('#logo_img').attr('src'));
+        });
+    })
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

@@ -1,0 +1,62 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+	<div class="aw-top-divl">
+		<a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+	</div>
+	<span><?php _e('消息');?></span>
+	<div class="aw-top-div">
+		<a href="m/notifications/setting/"><i class="iconfont iconshezhi"></i></a>
+	</div>
+</div>
+<div class="aw-xx ">
+	<div class="aw-xx-top clearfix">
+		<div class="aw-xx-top-l" onclick="window.location.href = G_BASE_URL+'/m/inbox/'">
+			<img src="<?php echo G_STATIC_URL;?>/h5/img/xx.png">
+			<div class="">
+				<b><?php _e('私信');?></b>
+				<?php if($this->msg) { ?>
+				<i class="aw-one-line">
+					<?php echo $this->msg['user_name'];?>:<?php echo $this->msg['message'];?>
+				</i>
+				<?php } else { ?>
+				<i><?php _e('还没有收到最新消息');?></i>
+				<?php } ?>
+			</div>
+		</div>
+
+		<div class="aw-xx-top-r" onclick="window.location.href = G_BASE_URL+'/m/inbox/'">
+			<?php if($this->user_info['inbox_unread']) { ?>
+			<i><?php echo $this->user_info['inbox_unread'];?></i>
+			<?php } ?>
+			<img src="<?php echo G_STATIC_URL;?>/h5/img/gd.png">
+		</div>
+	</div>
+	<div class="aw-xx-bottom">
+		<div class="aw-xx-bf clearfix">
+			<span><?php _e('通知列表');?></span>
+			<button type="button" onclick="AWS.User.read_notification($('#notifications_list').find('li'), 0, true);"><?php _e('全部已读');?></button>
+		</div>
+		<div class="aw-xx-bb">
+			<ul id="notifications_list">
+
+			</ul>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	var url = G_BASE_URL + '/notifications/ajax/list/';
+	layui.use(['element', 'flow'], function () {
+		var element = layui.element;
+		var flow = layui.flow;
+		flow.load({
+			elem: '#notifications_list', //指定列表容器
+			done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+				AWS.ajaxRequest(url, 'get', 'html', {page: page}, function (res) {
+					next(res, page < $($(res)[0]).attr('data-total'));
+				});
+			}
+		});
+		element.init();
+	});
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

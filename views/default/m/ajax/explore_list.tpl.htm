@@ -1,0 +1,100 @@
+<?php if($this->posts_list) { ?>
+<?php foreach($this->posts_list as $key=>$val) { ?>
+<?php if($val['post_type']=='question') { ?>
+<div class="aw-qanda-div aw-lineq" data-total="<?php echo $this->total;?>">
+    <p class="aw-q-div-t">
+        <a href="question/<?php echo $val['question_id'];?>"><?php echo $val['question_content'];?></a>
+        <?php if($val['is_reward']) { ?>
+        <span class="aw-q-div-txs"><img src="<?php echo G_STATIC_URL;?>/h5/img/jf.png"><?php _e('悬赏');?>:<?php echo $val['reward_money'];?></span>
+        <?php if($val['is_reward']==1 ):?>
+        <span class="aw-q-div-tjxz"><?php _e('进行中');?></span>
+        <?php elseif($val['is_reward']==4):?>
+        <span class="aw-q-div-tyjs"><?php _e('已结束');?></span>
+        <?php elseif($val['is_reward']==2):?>
+        <span class="aw-q-div-tgsz"><?php _e('公示中');?></span>
+        <?php endif;?>
+        <?php } ?>
+        <?php  if($val['set_top']==1){?>
+        <span class="aw-set-top"><?php _e('顶');?></span>
+        <?php }?>
+    </p>
+    <div class="aw-q-div-c clearfix">
+        <?php if($val['answer_info']) { ?>
+        <p onclick="window.location.href=G_BASE_URL + '/m/question/<?php echo $val['question_id'];?>';">
+            <?php if(!$val['answer_info']['anonymous']) { ?>
+            <span><a href="people/<?php echo $val['answer_info']['uid'];?>"><?php echo $val['answer_info']['user_info']['user_name'];?></a> ：</span>
+            <?php }else{ ?>
+            <span><a href="javascript:;"><?php _e('匿名用户');?></a> ：</span>
+            <?php } ?><?php echo cjk_substr(strip_tags(htmlspecialchars_decode($val['answer_info']['answer_content'])),0,80);?>
+        </p>
+        <?php }else{?>
+        <?php if(cjk_strlen(trim(strip_tags(htmlspecialchars_decode($val['question_detail']))))>0){?>
+        <p onclick="window.location.href=G_BASE_URL + '/m/question/<?php echo $val['question_id'];?>';">
+            <span><a href="javascript:;"><?php _e('问题描述');?></a> ：</span><?php echo cjk_substr(trim(strip_tags(htmlspecialchars_decode($val['question_detail']))),0,80);?>
+        </p>
+        <?php } ?>
+        <?php } ?>
+    </div>
+    <?php if($val['img_list']) { ?>
+    <div class="aw-x-h-b clearfix aw-preview-img">
+        <?php if(count($val['img_list']) >1){ ?>
+        <?php foreach($val['img_list'] as $k=>$v) { ?>
+        <?php if($k<3) { ?>
+        <img src="<?php echo $v;?>" class="more-img">
+        <?php } ?>
+        <?php } ?>
+        <?php }else{?>
+        <img src="<?php echo $val['img_list'][0];?>" class="one-img">
+        <?php } ?>
+    </div>
+    <?php } ?>
+    <div class="aw-q-div-b clearfix">
+        <a class="aw-dz"><i class="icon icon-agree"></i> <?php _e('赞');?><?php echo $val['agree_count'] ? $val['agree_count'] : '';?></a>
+        <a class="aw-hd"><i class="icon icon-comment"></i> <?php _e('回答');?><?php echo $val['answer_count'] ? $val['answer_count'] : '';?></a>
+        <a class="aw-dz"><i class="iconfont iconliulan-copy"></i><?php _e('阅');?><?php echo $val['view_count'] ? $val['view_count'] : '';?></a>
+        <a class="aw-hd"><i class="iconfont iconshijian"></i> <?php echo $val['agree_count'] ? date_friendly($val['answer_info']['add_time'],604800,'m-d H:i') : date_friendly($val['add_time'],604800,'m-d H:i');?></a>
+        <?php if($val['anonymous']){ ?>
+        <a href="javascript:;" class="aw-more"><img src="/static/common/avatar-max-img.png"></a>
+        <?php }else{?>
+        <a href="m/people/<?php echo $val['user_info']['uid']; ?>" class="aw-more"><img src="<?php echo get_avatar_url($val['published_uid']); ?>"></a>
+        <?php }?>
+    </div>
+</div>
+<?php } ?>
+<?php if($val['post_type']=='article') { ?>
+<div class="aw-qanda-div aw-lineq" data-total="<?php echo $this->total;?>">
+    <p class="aw-q-div-t">
+        <a href="article/<?php echo $val['id'];?>"><?php echo $val['title'];?></a>
+        <?php  if($val['set_top']==1 && $_GET['sort_type']=='new'){?>
+        <span class="aw-set-top"><?php _e('顶');?></span>
+        <?php }?>
+    </p>
+    <div class="aw-q-div-c clearfix" onclick="window.location.href=G_BASE_URL + '/m/article/<?php echo $val['id'];?>';">
+        <p>
+            <?php echo cjk_substr(trim(strip_tags(htmlspecialchars_decode($val['message']))),0,80);?>
+        </p>
+    </div>
+    <?php if($val['img_list']) { ?>
+    <div class="aw-x-h-b clearfix aw-preview-img">
+        <?php if(count($val['img_list']) >1){ ?>
+        <?php foreach($val['img_list'] as $k=>$v) { ?>
+        <?php if($k<3) { ?>
+        <img src="<?php echo $v;?>" class="more-img">
+        <?php } ?>
+        <?php } ?>
+        <?php }else{?>
+        <img src="<?php echo $val['img_list'][0];?>" class="one-img">
+        <?php } ?>
+    </div>
+    <?php } ?>
+    <div class="aw-q-div-b clearfix">
+        <a class="aw-dz"><i class="icon icon-agree"></i> <?php _e('赞');?><?php echo $val['votes'] ? $val['votes'] : '';?></a>
+        <a class="aw-hd"><i class="icon icon-comment"></i> <?php _e('评论');?><?php echo $val['comments'] ? $val['comments'] : '';?></a>
+        <a class="aw-dz"><i class="iconfont iconliulan-copy"></i><?php _e('阅');?><?php echo $val['views'] ? $val['views'] : '';?></a>
+        <a class="aw-hd"><i class="iconfont iconshijian"></i> <?php echo date_friendly($val['add_time'],604800,'m-d H:i');?></a>
+        <a class="aw-more" href="people/<?php echo $val['user_info']['uid'];?>"><img src="<?php echo get_avatar_url($val['user_info']['uid']);?>"></a>
+    </div>
+</div>
+<?php } ?>
+<?php } ?>
+<?php } ?>

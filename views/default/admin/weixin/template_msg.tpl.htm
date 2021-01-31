@@ -1,0 +1,49 @@
+<?php TPL::output('admin/global/header.tpl.htm'); ?>
+<?php TPL::output('admin/global/nav_menu.tpl.htm'); ?>
+
+<div class="aw-content-wrap">
+    <div class="mod">
+        <div class="mod-head">
+            <h3>
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="admin/weixin/template_msg/"><?php _e('消息模板列表'); ?></a></li>
+                    <li><a href="admin/weixin/add_template_msg/"><?php _e('新增消息模板'); ?></a></li>
+                </ul>
+            </h3>
+        </div>
+        <div class="tab-content mod-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th><?php _e('ID'); ?></th>
+                        <th><?php _e('模板ID'); ?></th>
+                        <th><?php _e('消息类型'); ?></th>
+                        <th><?php _e('操作'); ?></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($this->template_msg_list AS $template_info) { ?>
+                    <tr>
+                        <td><?php echo $template_info['id']; ?></td>
+                        <td><?php echo $template_info['template_id']; ?></td>
+                        <td><?php echo $this->template_type[$template_info['template_type']]; ?></td>
+                        <td class="nowrap">
+                            <a href="admin/weixin/add_template_msg/id-<?php echo $template_info['id']; ?>" data-toggle="tooltip" title="<?php _e('编辑'); ?>" class="icon icon-edit md-tip"></a>
+<!--
+                            <a href="javascript:;" onclick="AWS.ajax_request(G_BASE_URL + '/admin/ajax/weixin/remove_template_msg/', 'id=<?php echo $account_info['id'] ?>');" data-toggle="tooltip" title="<?php _e('删除'); ?>" class="icon icon-trash md-tip"></a>
+-->
+                        </td>
+                    </tr>
+                    <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mod-table-foot">
+                <?php echo $this->pagination; ?>
+            </div>
+        </div>
+    </div>
+</div>
+<?php TPL::output('admin/global/footer.tpl.htm'); ?>

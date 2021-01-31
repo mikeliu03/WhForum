@@ -1,0 +1,103 @@
+<?php TPL::output('admin/global/header.tpl.htm'); ?>
+<?php TPL::output('admin/global/nav_menu.tpl.htm'); ?>
+<div class="aw-content-wrap">
+    <div class="mod">
+        <div class="mod-head">
+            <h3>
+				<ul class="nav nav-tabs">
+					<li><a href="admin/plugin/"><?php _e('插件列表'); ?></a></li>
+					<?php if($this->new_plugins_count>0):?>
+				    <li class=""><a href="javascript:;" onclick="AWS.ajax_request(G_BASE_URL+'/admin/plugin/get_new_plugin/');"><?php _e('您有'.$this->new_plugins_count.'个新插件,点击更新'); ?></a></li>
+					<?php endif;?>
+					<li class="active"><a href="admin/plugin/design/"><?php _e('设计插件'); ?></a></li>
+					<li><a href="admin/plugin/import/"><?php _e('导入插件'); ?></a></li>
+					<li><a href="http://market.wecenter.com/" target="_blank"><?php _e('应用市场'); ?></a></li>
+				</ul>
+            </h3>
+        </div>
+		<div class="mod-body tab-content">
+			<div class="alert alert-success collapse error_message"></div>
+			<form action="admin/plugin/save_plugin/" method="post" id="plugin_form" class="form-horizontal">
+				<table class="table table-striped">
+					<tr>
+						<td>
+							<div class="form-group">
+								<span class="col-sm-3 col-xs-3 control-label"><?php _e('插件标识'); ?>:</span>
+								<div class="col-sm-8 col-xs-8">
+									<input type="text" name="name" class="form-control" value="<?php echo $this->info['name']; ?>">
+									<span class="help-block">如:advertising,注意无需添加wc_前缀</span>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="form-group">
+								<span class="col-sm-3 col-xs-3 control-label"><?php _e('插件名称'); ?>:</span>
+								<div class="col-sm-8 col-xs-8">
+									<input type="text" name="title" class="form-control" value="<?php echo $this->info['title']; ?>">
+									<span class="help-block">如:广告插件</span>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="form-group">
+								<span class="col-sm-3 col-xs-3 control-label"><?php _e('插件作者'); ?>:</span>
+								<div class="col-sm-8 col-xs-8">
+									<input type="text" name="author" class="form-control" value="<?php echo $this->info['author']; ?>">
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="form-group">
+								<span class="col-sm-3 col-xs-3 control-label"><?php _e('插件版本'); ?>:</span>
+								<div class="col-sm-8 col-xs-8">
+									<input type="text" name="version" class="form-control" value="<?php echo $this->info['version']; ?>">
+									<span class="help-block">如:1.0.0</span>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="form-group">
+								<span class="col-sm-3 col-xs-3 control-label"><?php _e('插件介绍'); ?>:</span>
+								<div class="col-sm-8 col-xs-8">
+									<textarea class="form-control" name="intro" rows="4"><?php echo $this->info['intro']; ?></textarea>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="form-group">
+								<span class="col-sm-3 col-xs-3 control-label"><?php _e('使用钩子'); ?>:</span>
+								<div class="col-sm-8 col-xs-8">
+									<?php foreach($this->hooks as $k=>$v){?>
+									<label class="form-inline pull-left" style="margin-bottom: 10px">
+										<input type="checkbox" value="<?php echo $v['name'];?>" class="form-control"  name="hooks[]" /><?php echo $v['name'];?>&nbsp;&nbsp;&nbsp;&nbsp;
+									</label>
+									<?php } ?>
+								</div>
+							</div>
+						</td>
+					</tr>
+
+					<tfoot>
+					<tr>
+						<td>
+							<input type="button" value="<?php _e('保存设置'); ?>" class="btn btn-primary center-block" onclick="AWS.ajax_post($('#plugin_form'));" />
+						</td>
+					</tr>
+					</tfoot>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>
+
+<?php TPL::output('admin/global/footer.tpl.htm'); ?>

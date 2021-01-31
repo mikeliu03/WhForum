@@ -1,0 +1,228 @@
+<?php TPL::output('admin/global/header.tpl.htm'); ?>
+<?php TPL::output('admin/global/nav_menu.tpl.htm'); ?>
+
+<div class="aw-content-wrap">
+    <div class="mod">
+        <div class="mod-head">
+            <h3>
+                <ul class="nav nav-tabs">
+                    <li><a href="admin/cloud/"><?php _e('系统信息'); ?></a></li>
+                    <li class="active"><a href="admin/cloud/upgrade/"><?php _e('在线升级'); ?></a></li>
+                </ul>
+            </h3>
+        </div>
+
+        <div class="mod-body tab-content">
+            <div class="alert alert-danger error_message">
+                <p style="color: red">为了防止升级过程中出现数据丢失等问题，建议您在升级前先备份数据库和网站程序！！！</p>
+            </div>
+            <div class="tab-pane active">
+                <div class="panel">
+                    <div class="panel-heading" style="padding: 0 15px;">
+                        <h4 style="margin: 0"><?php _e('更新信息'); ?></h4>
+                    </div>
+                    <?php if($this->upgrade_info && $this->upgrade_info['version']) { ?>
+                    <div class="panel-body">
+                        <p style="color: red">
+                            最新版本：WeCenter V<?php echo $this->upgrade_info['version'];?>
+                        </p>
+                        <h4 >更新内容：</h4>
+                        <?php echo nl2br($this->upgrade_info['intro']);?>
+                    </div>
+                    <div class="panel-footer">
+                        <a href="javascript:;" onclick="downloadFile()" id="update-button" class="btn btn-danger">开始升级</a>
+                    </div>
+                    <?php }else{ ?>
+                    <div class="panel-body">
+                        <p style="color: red">获取最新版本失败，请检查网络连接是否正常！</p>
+                    </div>
+                    <?php } ?>
+                    
+                    <div id="file-show" style="display: none;">
+                    <p>更新包大小：<span id="file-size">0</span> Bytes</p>
+                    <!-- 进度条 -->
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                            <span id="imported-progress">0</span>%
+                        </div>
+                    </div>
+                    </div>
+                    <!-- 进度条 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<?php if($this->upgrade_info && $this->upgrade_info['version']) { ?>
+<script>
+    var version = '<?php echo $this->upgrade_info['version'];?>';
+    var version_build = '<?php echo $this->upgrade_info['version_build'];?>';
+    var ISGO = true;
+    var ISLOOP = true;
+    // 更新进度条的函数
+    function updateProgress(progress)
+    {
+        $('#imported-progress').html(progress);
+        $('.progress-bar').css('width', progress+'%').attr('aria-valuenow', progress);
+    }
+    function downloadFile() {
+        var file_size = 0;
+        var progress  = 0;
+        var curl_file_url = '';
+        var curl_file_size = 0;
+        var curl_file_name = '';
+        var curl_log_id = 0;
+
+        $.ajax({
+            url: G_BASE_URL + '/admin/cloud/download/',
+            type: 'POST',
+            data: {version:"<?php echo $this->upgrade_info['version_id'];?>"},
+            dataType: 'json',
+            beforeSend: function() {
+                $('#update-button').html('正在准备').attr('disabled', 'disabled');
+            },
+        }).done(function(json)
+        {
+            curl_file_url = json.download_url;
+            curl_file_size = json.file_size;
+            curl_file_name = json.file_name;
+            curl_log_id = json.log_id;
+            load();
+
+        }).fail(function(res)
+        {
+            $('#update-button').html('开始升级').removeAttr('disabled');
+            alert(res.responseText);
+        });
+
+        function load() {
+
+            $.ajax({
+                url: G_BASE_URL + '/admin/cloud/download_file/',
+                type: 'POST',
+                data: {action:'prepare-download',curl_file_url:curl_file_url,curl_file_size:curl_file_size,curl_file_name:curl_file_name},
+                dataType: 'json',
+                beforeSend: function() {
+                    $('#update-button').html('正在准备').attr('disabled', 'disabled');
+                },
+            }).done(function(json) {
+
+                file_size = json.file_size;
+                $('#file-show').show();
+                $('#file-size').html(file_size);
+
+                // 显示进度条
+                $.ajax({
+                    url: G_BASE_URL + '/admin/cloud/download_file/',
+                    type: 'POST',
+                    data: {action:'start-download',curl_file_url:curl_file_url,curl_file_size:curl_file_size,curl_file_name:curl_file_name},
+                    dataType: 'json'
+                }).done(function(json)
+                {
+                    progress = 100;
+                    
+                }).fail(function(res)
+                {
+                    $('#update-button').html('开始升级').removeAttr('disabled');
+                    alert(res.responseText);
+                });
+
+                var interval_id = window.setInterval(function()
+                {
+                    if(!ISLOOP)
+                    {
+                        return false;
+                    }
+                    ISLOOP = false;
+                    $('#imported-progress').html(progress);
+                    $('.progress-bar').css('width', progress+'%').attr('aria-valuenow', progress);
+                    if (progress >= 100)
+                    {
+                        $('#update-button').html('升级文件下载完成');
+                        clearInterval(interval_id);
+                        return false;
+                        // 到此远程文件下载完成，继续其他逻辑
+                    } else {
+                        $.ajax({
+                            url: G_BASE_URL + '/admin/cloud/download_file/',
+                            type: 'POST',
+                            data: {action:'get-file-size',curl_file_url:curl_file_url,curl_file_size:curl_file_size,curl_file_name:curl_file_name},
+                            dataType: 'json',
+                        }).done(function(json)
+                        {
+                            ISLOOP = true;
+                            progress = (json.size / file_size * 100).toFixed(2);
+                            if(progress > 100)
+                            {
+                                progress = 100;
+                                $('#update-button').html('升级文件下载完成');
+                                clearInterval(interval_id);
+                            }
+                            $('#update-button').html('正在下载');
+                            updateProgress(progress);
+
+                            if(progress == 100)
+                            {
+                                $('#update-button').html('升级文件下载完成');
+                                clearInterval(interval_id);
+                                unZip(curl_file_name);
+                                return false;
+                            }
+                        }).fail(function(res)
+                        {
+                            ISLOOP = true;
+                            $('#update-button').html('开始升级').removeAttr('disabled');
+                            alert(res.responseText);
+                        });
+                    }
+                }, 300);
+
+            }).fail(function(res)
+            {
+                $('#update-button').html('开始升级').removeAttr('disabled');
+                alert(res.responseText);
+            });
+        }
+
+        function unZip(file_name)
+        {
+            $('#update-button').html('正在解压文件,执行sql');
+
+            if(!ISGO)
+            {
+                return false;
+            }
+
+            ISGO = false;
+
+            $.ajax({
+                url: G_BASE_URL + '/admin/cloud/unzip_file/',
+                type: 'POST',
+                data: {file_name:file_name,version:version,version_build:version_build,log_id:curl_log_id},
+                dataType: 'json'
+            }).done(function(json)
+            {
+                ISGO = true;
+                $('#update-button').html('升级完成');
+                
+                setTimeout(function(){
+                    alert(json.msg);
+                    window.location.href = G_BASE_URL + '/admin/cloud/';
+                    return false;
+                },2000);
+                
+
+            }).fail(function(res)
+            {
+                ISGO = true;
+                $('#update-button').html('开始升级').removeAttr('disabled');
+                alert(res.responseText);
+            });
+        }
+    }
+</script>
+<?php } ?>
+
+<?php TPL::output('admin/global/footer.tpl.htm'); ?>

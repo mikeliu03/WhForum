@@ -1,0 +1,139 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<form id="setting_form" method="post" action="account/ajax/privacy_setting/">
+	<div class="aw-top">
+		<div class="aw-top-divl">
+			<a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+		</div>
+		<span><?php _e('消息设置');?></span>
+		<div class="aw-top-div">
+			<a href="javascript:;" class="aw-top-fb" onclick="AWS.ajax_post($('#setting_form'));"><?php _e('保存');?></a>
+		</div>
+	</div>
+	<div class="aw-xx ">
+		<div class="aw-notify">
+			<div class="aw-xx-bf clearfix"><span><?php _e('私信设置');?></span></div>
+			<div class="aw-xx-bb">
+				<div class="notify-form-item">
+					<label><?php _e('谁可以给我发私信');?></label>
+					<div>
+						<input type="radio" value="0" <?php if (!$this->user_info['inbox_recv']) { ?> checked="checked"<?php } ?> name="inbox_recv"/> <?php _e('所有人');?>&nbsp;&nbsp;
+						<input type="radio" value="1" <?php if ($this->user_info['inbox_recv']) { ?> checked="checked"<?php } ?> name="inbox_recv" /><?php _e('我关注的人');?>&nbsp;&nbsp;&nbsp;
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="aw-notify">
+			<div class="aw-xx-bf clearfix"><span><?php _e('微博设置');?></span></div>
+			<div class="aw-xx-bb">
+				<div class="notify-form-item">
+					<label><?php _e('是否允许别人访问我的微博');?></label>
+					<div>
+						<input type="radio" value="1" name="weibo_visit"<?php if ($this->user_info['weibo_visit'] == 1) { ?> checked="checked"<?php } ?> /> <?php _e('是'); ?>
+						<input type="radio" value="0" name="weibo_visit"<?php if (!$this->user_info['weibo_visit']) { ?> checked="checked"<?php } ?> /> <?php _e('否'); ?>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="aw-notify">
+			<div class="aw-xx-bf clearfix"><span><?php _e('邮件设置');?></span></div>
+			<div class="aw-xx-bb">
+				<div class="notify-form-item">
+					<label><?php _e('当有人关注我'); ?></label>
+					<div>
+						<input name="email_settings[]" value="FOLLOW_ME" type="checkbox"<?php if ($this->user_info['email_settings']['FOLLOW_ME'] != 'N') { ?> checked="checked"<?php } ?> />
+					</div>
+				</div>
+
+				<div class="notify-form-item">
+					<label><?php _e('有人邀请我回答问题'); ?></label>
+					<div>
+						<input name="email_settings[]" value="QUESTION_INVITE" type="checkbox"<?php if ($this->user_info['email_settings']['QUESTION_INVITE'] != 'N') { ?> checked="checked"<?php } ?> />
+					</div>
+				</div>
+
+				<div class="notify-form-item">
+					<label><?php _e('我关注的问题有了新回复'); ?></label>
+					<div>
+						<input name="email_settings[]" value="NEW_ANSWER" type="checkbox"<?php if ($this->user_info['email_settings']['NEW_ANSWER'] != 'N') { ?> checked="checked"<?php } ?> />
+					</div>
+				</div>
+
+				<div class="notify-form-item">
+					<label><?php _e('有人向我发送私信'); ?></label>
+					<div>
+						<input name="email_settings[]" value="NEW_MESSAGE" type="checkbox"<?php if ($this->user_info['email_settings']['NEW_MESSAGE'] != 'N') { ?> checked="checked"<?php } ?> />
+					</div>
+				</div>
+
+				<div class="notify-form-item">
+					<label><?php _e('我的问题被编辑'); ?></label>
+					<div>
+						<input name="email_settings[]" value="QUESTION_MOD" type="checkbox"<?php if ($this->user_info['email_settings']['QUESTION_MOD'] != 'N') { ?> checked="checked"<?php } ?> />
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<?php if (get_setting('weixin_app_id')) { ?>
+		<div class="aw-notify">
+			<div class="aw-xx-bf clearfix"><span><?php _e('微信设置'); ?></span></div>
+			<div class="aw-xx-bb">
+				<div class="notify-form-item">
+					<lable> <?php _e('当有人 @ 我'); ?> :</lable>
+					<div>
+						<input name="weixin_settings[]" value="AT_ME" type="checkbox"<?php if ($this->user_info['weixin_settings']['AT_ME'] != 'N') { ?> checked="checked"<?php } ?> />
+					</div>
+				</div>
+				<div class="notify-form-item">
+					<lable> <?php _e('我的问题有了新回复'); ?> :</lable>
+					<div>
+						<input name="weixin_settings[]" value="NEW_ANSWER" type="checkbox"<?php if ($this->user_info['weixin_settings']['NEW_ANSWER'] != 'N') { ?> checked="checked"<?php } ?> />
+					</div>
+				</div>
+				<div class="notify-form-item">
+					<lable> <?php _e('我的文章有了新评论'); ?> :</lable>
+					<div>
+						<input name="weixin_settings[]" value="NEW_ARTICLE_ANSWER" type="checkbox"<?php if ($this->user_info['weixin_settings']['NEW_ARTICLE_ANSWER'] != 'N') { ?> checked="checked"<?php } ?> />
+					</div>
+				</div>
+				<div class="notify-form-item">
+					<lable> <?php _e('我的回复有了新评论'); ?> :</lable>
+					<div>
+						<input name="weixin_settings[]" value="NEW_COMMENT" type="checkbox"<?php if ($this->user_info['weixin_settings']['NEW_COMMENT'] != 'N') { ?> checked="checked"<?php } ?> />
+					</div>
+				</div>
+
+				<div class="notify-form-item">
+					<lable><?php _e('有人邀请我回答问题'); ?> :</lable>
+					<div>
+						<input name="weixin_settings[]" value="QUESTION_INVITE" type="checkbox"<?php if ($this->user_info['weixin_settings']['QUESTION_INVITE'] != 'N') { ?> checked="checked"<?php } ?> />
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php } ?>
+
+		<div class="aw-notify">
+			<div class="aw-xx-bf clearfix">
+				<span><?php _e('通知设置');?></span>
+			</div>
+			<div class="aw-xx-bb">
+				<?php foreach($this->notify_actions as $key => $val) { ?>
+				<?php if ($val['user_setting']) { ?>
+				<div class="notify-form-item">
+					<label><?php _e($val['desc']); ?></label>
+					<div>
+						<input name="notification_settings[<?php echo $key;?>]" type="checkbox" value="1"<?php if (!in_array($key, $this->notification_settings['data']) OR !$this->notification_settings['data']) { ?> checked="checked"<?php } ?> />&nbsp;
+					</div>
+				</div>
+				<?php } ?>
+				<?php } ?>
+			</div>
+		</div>
+
+	</div>
+</form>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

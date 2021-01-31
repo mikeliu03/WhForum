@@ -1,0 +1,29 @@
+<?php if ($this->users_list) { ?>
+<?php foreach($this->users_list as $key => $val) { ?>
+<li class="clearfix user-item" data-total="<?php echo $this->total;?>">
+    <?php if($this->type) { ?>
+    <span class="aw-bd-list-l"><?php echo ($key + 1 + ((intval($_GET['page']) - 1) * get_setting('contents_per_page')));;?></span>
+    <?php } ?>
+    <div class="aw-bd-list-c">
+        <a  href="people/<?php echo $val['uid']; ?>">
+            <img alt="<?php echo $val['user_name'];?>" src="<?php echo get_avatar_url($val['uid'], 'mid'); ?>" />
+        </a>
+        <div>
+            <b>
+                <a href="people/<?php echo $val['uid']; ?>"><?php echo $val['user_name']; ?></a>
+                <?php if ($val['verified']) { ?><i class="icon-v<?php if ($val['verified'] == 'enterprise') { ?> i-ve<?php } ?>" title="<?php if ($val['verified'] == 'enterprise') { ?><?php _e('企业认证'); ?><?php } else { ?><?php _e('个人认证'); ?><?php } ?>"></i><?php } ?>
+            </b>
+            <p><?php _e('威望');?>:<?php echo $val['reputation']; ?> <?php _e('粉丝');?>:<?php echo $val['fans_count']; ?></p>
+        </div>
+    </div>
+    <?php if ($val['uid'] != $this->user_id AND $this->user_id) { ?>
+    <div class="aw-bd-list-r">
+        <button type="button" class="aw-bd-lrgz <?php echo $val['focus'] ? 'disable' : '';?>" onclick="AWS.User.follow($(this),'user',<?php echo $val['uid'];?>);">
+            <?php $val['focus'] ? _e('已关注') : _e('+ 关注'); ?>
+        </button>
+        <button type="button" <?php if($this->user_id){?> onclick="AWS.dialog('inbox','<?php echo $val['user_name'];?>')" <?php } ?>><img src="<?php echo G_STATIC_URL;?>/h5/img/bd.png"><?php _e('私信');?></button>
+    </div>
+    <?php } ?>
+</li>
+<?php } ?>
+<?php } ?>

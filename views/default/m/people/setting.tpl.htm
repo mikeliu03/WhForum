@@ -1,0 +1,46 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+	<div class="aw-top-divl">
+		<a href="javascript:;" onclick="window.history.back(-1);">
+			<img class="aw-top-back" src="<?php echo G_STATIC_URL;?>/h5/img/back.png">
+		</a>
+	</div>
+	<span><?php _e('账号设置');?></span>
+	<div class="aw-top-div">
+		<a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+	</div>
+</div>
+<div class="aw-yqhd aw-zhsz">
+	<div class="aw-my-list">
+		<ul>
+			<li>
+				<a href="m/people/profile/" class="clearfix">
+					<span><?php _e('资料设置');?></span>
+					<img src="<?php echo G_STATIC_URL;?>/h5/img/gd.png">
+				</a>
+			</li>
+			<li>
+				<a href="m/people/security/" class="clearfix">
+					<span><?php _e('账号安全');?></span>
+					<img src="<?php echo G_STATIC_URL;?>/h5/img/gd.png">
+				</a>
+			</li>
+			<li>
+				<a href="m/people/verify/" class="clearfix">
+					<span><?php _e('认证管理');?></span>
+					<img src="<?php echo G_STATIC_URL;?>/h5/img/gd.png">
+				</a>
+			</li>
+			<?php if(get_setting('qq_login_enabled')=='Y' || get_setting('sina_weibo_enabled') == 'Y' || get_setting('weixin_app_id')){?>
+			<li>
+				<a href="m/people/bind/" class="clearfix">
+					<span><?php _e('账号绑定');?></span>
+					<img src="<?php echo G_STATIC_URL;?>/h5/img/gd.png">
+				</a>
+			</li>
+			<?php } ?>
+		</ul>
+	</div>
+	<button type="button" class="aw-zhsz-btn" onclick="window.location.href = G_BASE_URL+'/account/logout/'"><?php _e('退出我的账号');?></button>
+</div>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

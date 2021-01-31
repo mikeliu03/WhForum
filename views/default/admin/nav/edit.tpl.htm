@@ -1,0 +1,138 @@
+<?php TPL::output('admin/global/header.tpl.htm'); ?>
+<?php TPL::output('admin/global/nav_menu.tpl.htm'); ?>
+
+<div class="aw-content-wrap">
+	<form action="admin/nav/save/" id="settings_form" method="post" onsubmit="return false">
+	<input type="hidden" name="id" value="<?php echo $this->info['id']; ?>" />
+	<div class="mod">
+		<div class="mod-head">
+			<h3>
+				<ul class="nav nav-tabs">
+					<li><a href="admin/nav/"><?php _e('前台菜单管理'); ?></a></li>
+					<li class="active"><a href="admin/nav/edit/"><?php _e('新建菜单'); ?></a></li>
+				</ul>
+			</h3>
+		</div>
+
+		<div class="tab-content mod-content">
+			<table class="table table-striped">
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php _e('菜单标题'); ?>:</span>
+							<div class="col-sm-4 col-xs-8">
+								<input type="text" name="title" class="form-control" value="<?php echo $this->info['title']; ?>">
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php _e('菜单URL'); ?>:</span>
+							<div class="col-sm-4 col-xs-8">
+								<input type="text" name="url" class="form-control" value="<?php echo $this->info['url']; ?>">
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php _e('菜单图标'); ?>:</span>
+							<div class="col-sm-4 col-xs-8">
+								<input type="text" name="icon" class="form-control" value="<?php echo $this->info['icon']; ?>">
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php _e('菜单排序'); ?>:</span>
+							<div class="col-sm-4 col-xs-8">
+								<input type="text" name="sort" class="form-control" placeholder="数字越大越靠前" value="<?php echo $this->info['sort']; ?>">
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php _e('是否需要登录显示'); ?>:</span>
+							<div class="col-sm-6 col-xs-8">
+								<div class="btn-group mod-btn">
+									<label type="button" class="btn mod-btn-color">
+										<input type="radio" name="is_user" value="1"<?php if ($this->info['is_user']) { ?> checked="checked"<?php } ?> /> <?php _e('是'); ?>
+									</label>
+
+									<label type="button" class="btn mod-btn-color">
+										<input type="radio" name="is_user" value="0"<?php if (!$this->info['is_user']) { ?> checked="checked"<?php } ?> /> <?php _e('否'); ?>
+									</label>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php _e('状态'); ?>:</span>
+							<div class="col-sm-6 col-xs-8">
+								<div class="btn-group mod-btn">
+									<label type="button" class="btn mod-btn-color">
+										<input type="radio" name="status" value="Y"<?php if ($this->info['status']=='Y' || !isset($this->info['status'])) { ?> checked="checked"<?php } ?> /> <?php _e('启用'); ?>
+									</label>
+
+									<label type="button" class="btn mod-btn-color">
+										<input type="radio" name="status" value="N"<?php if ($this->info['status']=='N') { ?> checked="checked"<?php } ?> /> <?php _e('禁用'); ?>
+									</label>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<div class="form-group">
+							<span class="col-sm-4 col-xs-3 control-label"><?php _e('设置为首页'); ?>:</span>
+							<div class="col-sm-6 col-xs-8">
+								<div class="btn-group mod-btn">
+									<label type="button" class="btn mod-btn-color">
+										<input type="radio" name="is_index" value="1"<?php if ($this->info['is_index']=='1') { ?> checked="checked"<?php } ?> /> <?php _e('是'); ?>
+									</label>
+
+									<label type="button" class="btn mod-btn-color">
+										<input type="radio" name="is_index" value="0"<?php if ($this->info['is_index']=='0' || !isset($this->info['is_index'])) { ?> checked="checked"<?php } ?> /> <?php _e('否'); ?>
+									</label>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+
+
+				<tfoot>
+				<tr>
+					<td>
+						<input type="button" value="<?php _e('保存设置'); ?>" class="btn btn-primary center-block" onclick="AWS.ajax_post($('#settings_form'));" />
+					</td>
+				</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+	</form>
+</div>
+<script type="text/javascript">
+
+$(".notranslate").find('a').click(function(){
+	var icon=$(this).parents('tr').find('td').eq(1).html();
+	$("input[name=cname]").val(icon);
+	$(".seticon").next().removeClass().addClass(icon);
+	$(".closemo").click();
+	// alert($(this).parents('tr').find('td').eq(1).html());
+});
+</script>
+
+<?php TPL::output('admin/global/footer.tpl.htm'); ?>

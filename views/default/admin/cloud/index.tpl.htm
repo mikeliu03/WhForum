@@ -1,0 +1,94 @@
+<?php TPL::output('admin/global/header.tpl.htm'); ?>
+<?php TPL::output('admin/global/nav_menu.tpl.htm'); ?>
+
+<div class="aw-content-wrap">
+    <div class="mod">
+        <div class="mod-head">
+            <h3>
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="admin/cloud/"><?php _e('系统信息'); ?></a></li>
+                </ul>
+            </h3>
+        </div>
+
+        <div class="mod-body tab-content">
+            <div class="tab-pane active">
+                <div class="panel">
+                    <div class="panel-heading" style="padding: 0 15px;">
+                        <h4 style="margin: 0"><?php _e('系统信息'); ?></h4>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr>
+                                <td style="text-align: left">
+                                    <b><?php _e('当前版本'); ?>：</b>WeCenter V<?php echo G_VERSION;?>
+                                    <?php if($this->version_info['bind_status']) { ?>
+                                    <?php if ($this->version_info['build_time'] > G_VERSION_BUILD){ ?>
+                                    <a href="admin/cloud/upgrade/" class="btn btn-xs btn-danger">有新版本点击升级</a>
+                                    <?php }else{  ?>
+                                    <span class="text-color-999" style="color: green"><i class="glyphicon glyphicon-info-sign"></i> 您当前已是最新版，无需升级！</span>
+                                    <?php } ?>
+                                    <?php }else { ?>
+                                    <span class="text-color-999" style="color: red"><i class="glyphicon glyphicon-info-sign"></i> 您还未绑定账号，请先绑定官方账号！</span>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left">
+                                    <b><?php _e('通信状态'); ?>：</b>
+                                    <?php if ($this->version_info){ ?>
+                                    <a href="javascript:;" class="btn btn-xs btn-success">通信正常</a>
+                                    <?php }else{ ?>
+                                    <a href="javascript:;" class="btn btn-xs btn-danger">通信异常</a>
+                                    <span class="text-color-999"><i class="glyphicon glyphicon-info-sign"></i> 请检查您的网络是否能够正常访问WeCenter官方社区</span>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left">
+                                    <b><?php _e('官方账号'); ?>：</b>
+                                    <?php if (!$this->version_info['bind_status']){ ?>
+                                    未绑定账号 <a href="javascript:;" class="btn btn-xs btn-warning" onclick="bindWeCenter();">绑定账号</a>
+                                    <?php }else{ ?>
+                                    已绑定账号(<a href="https://wenda.wecenter.com/people/<?php echo $this->version_info['bind_user']; ?>" target="_blank"><?php echo $this->version_info['bind_user']; ?></a>)
+                                    <a href="javascript:;" onclick="AWS.ajax_request(G_BASE_URL+'/admin/cloud/unbind/')" class="btn btn-xs btn-danger">解除绑定</a>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: left">
+                                    <b><?php _e('授权认证'); ?>：</b><?php echo base_url();?>
+                                    <?php if($this->version_info['type'] == 'people') { ?>
+                                    <a href="javascript:;" class="btn btn-xs btn-success">个人授权版</a>
+                                    <?php }elseif($this->version_info['type'] == 'enterprise') { ?>
+                                    <a href="javascript:;" class="btn btn-xs btn-success">企业授权版</a>
+                                    <?php }elseif($this->version_info['type'] == 'ultimate') { ?>
+                                    <a href="javascript:;" class="btn btn-xs btn-success">旗舰授权版</a>
+                                    <?php }else { ?>
+                                    <a href="javascript:;" class="btn btn-xs btn-danger">未授权</a>
+                                    <?php } ?>
+                                    <a href="http://www.wecenter.com/buy/" target="_blank"><span class="text-color-999"><i class="glyphicon glyphicon-info-sign"></i> 查看版本区别</span></a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php if (!$this->bind){ ?>
+<script type="text/javascript">
+    function bindWeCenter()
+    {
+        $('#aw-ajax-box').html(Hogan.compile(AW_TEMPLATE.AccountBindBox).render(
+            {
+                'title': '账号绑定',
+            }));
+        $(".aw-bind-box").modal('show');
+    }
+</script>
+<?php } ?>
+<?php TPL::output('admin/global/footer.tpl.htm'); ?>

@@ -1,0 +1,161 @@
+<?php TPL::output('global/header.tpl.htm'); ?>
+<div class="aw-container-wrap">
+    <div class="container">
+        <div class="row">
+            <div class="aw-content-wrap clearfix">
+                <div class="col-sm-12 col-md-9 aw-main-content">
+                    <!-- 新消息通知 -->
+                    <div class="aw-mod aw-notification-box collapse" id="index_notification">
+                        <div class="mod-head common-head">
+                            <h2>
+                                <span class="pull-right"><a href="account/setting/privacy/#notifications" class="text-color-999"><i class="icon icon-setting"></i> <?php _e('通知设置'); ?></a></span>
+                                <i class="icon icon-bell"></i><?php _e('新通知'); ?><em class="badge badge-important" name="notification_unread_num"><?php echo $this->user_info['notification_unread']; ?></em>
+                            </h2>
+                        </div>
+                        <div class="mod-body">
+                            <ul id="notification_list"></ul>
+                        </div>
+                        <div class="mod-footer clearfix">
+                            <a href="javascript:;" onclick="AWS.Message.read_notification(false, 0, false);" class="pull-left btn btn-mini btn-gray"><?php _e('我知道了'); ?></a>
+                            <a href="notifications/" class="pull-right btn btn-mini btn-success"><?php _e('查看所有'); ?></a>
+                        </div>
+                    </div>
+                    <!-- end 新消息通知 -->
+                    <ul class="nav nav-tabs aw-nav-tabs active hidden-xs">
+                        <?php if($this->user_id){?>
+                        <li>
+                            <a href="javascript:void(0);" onclick="window.location.href=G_BASE_URL+'/column/my/'" data-sort="hot"><?php _e('我的专栏'); ?></a>
+                        </li>
+                        <?php }?>
+                        <li class="<?php if ($_GET['sort']=='hot') { ?> active <?php } ?>">
+                            <a href="column/ajax/list/sort-hot#column" onclick="return false;" data-sort="hot"><?php _e('热门'); ?></a>
+                        </li>
+                        <li class="<?php if ($_GET['sort']=='new') { ?> active <?php } ?>">
+                            <a href="column/ajax/list/sort-new#column" onclick="return false;" data-sort="new"><?php _e('最新'); ?></a>
+                        </li>
+                        <li class="<?php if ($_GET['sort']=='sum') { ?> active <?php } ?>">
+                            <a href="column/ajax/list/#column" onclick="return false;" data-sort="sum"><?php _e('默认'); ?></a>
+                        </li>
+                        <h2><img src="<?php echo G_STATIC_URL ?>/css/default/img/np.png"><?php _e('专栏'); ?></h2>
+                    </ul>
+                    <div class="aw-column-list clearfix">
+                        <div class="aw-column-list-box clearfix" id="column">
+                            <?php echo $this->column_list_bit; ?>
+                        </div>
+                        <h6 class="aw-more" id="bp_all_more" data-page="1"><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/href.png"></i><?php _e('换一换'); ?></h6>
+                    </div>
+                    <div class="aw-article-list clearfix">
+                        <div class="column-title">
+                            <h2><img src="<?php echo G_STATIC_URL ?>/css/default/img/np.png"> <?php _e('文章'); ?></h2>
+                            <a href="article/" class="nckmore"><?php _e('更多'); ?>&gt;&gt;</a>
+                        </div>
+
+                        <div class="aw-column-article clearfix">
+                            <?php foreach ($this->article_list as $article) { ?>
+                            <dl>
+                                <dt><a href="article/<?php echo $article['id']; ?>"><img src="<?php echo $article['article_img']; ?>"></a></dt>
+                                <dd>
+                                    <h2><a href="article/<?php echo $article['id']; ?>"><?php echo $article['title'] ?></a></h2>
+                                    <b><?php echo $article['user']['user_name'] ?></b>
+                                    <span>
+                                        <em><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/nz.png"></i> <?php echo num2tring($article['votes']) ?></em>
+                                        <em><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/nsee.png"></i> <?php echo num2tring($article['views']) ?></em>
+                                        <em class="ntime"><?php echo date_friendly($article['add_time']);?></em>
+                                    </span>
+                                </dd>
+                            </dl>
+                            <?php } ?>
+                        </div>
+                        <h6 class="aw-more" id="article_all_more" data-page="1"><i><img src="<?php echo G_STATIC_URL ?>/css/default/img/href.png"></i><?php _e('换一换'); ?></h6>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-3 aw-side-bar hidden-xs hidden-sm">
+                    <div class="column-side-title">
+                        <h2><img src="<?php echo G_STATIC_URL ?>/css/default/img/tjpop.png"><?php _e('推荐专栏'); ?></h2>
+                    </div>
+                    <?php foreach ($this->recommend_info as $k => $recommend) { ?>
+                    <div class="N-poplist <?php echo $k!=0?($k==1?'two':'three'):'one';?>">
+                        <div class="N-popbox">
+                            <em><?php echo $k+1;?></em>
+                            <dl>
+                                <dt><img onclick="window.location = G_BASE_URL + '/column/details/<?php echo $recommend['column_id']; ?>'" src="<?php echo $recommend['column_pic']; ?>"><a href="column/details/<?php echo $recommend['column_id'];?>"><?php echo $recommend['column_name'] ?></a></dt>
+                                <dd><?php echo cjk_substr($recommend['column_description'], 0, 10 , 'UTF-8', '...') ?></dd>
+                            </dl>
+                            <ul>
+                                <li><img src="<?php echo G_STATIC_URL ?>/css/default/img/nsee.png"><?php _e('文章总浏览量'); ?>:<i><?php echo num2tring(round($recommend['views_count'])) ?></i></li>
+                                <li><img src="<?php echo G_STATIC_URL ?>/css/default/img/nnum.png"><?php _e('发表文章总数'); ?>:<i><?php echo num2tring($recommend['article_count']) ?></i></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var sort = 'sum';
+    var re=eval("/dl/g");
+    $(".aw-nav-tabs").find("a").mouseenter(function()
+    {
+        $('#bp_all_more').show();
+        $('#bp_all_more').attr('data-page',1);
+        $(".aw-nav-tabs").find("li").removeClass("active");
+        $(this).parent().addClass("active");
+        var url=$(this).attr("href");
+        sort = $(this).attr('data-sort');
+        $.get(url,function(result){
+            $('.aw-column-list-box').html(result);
+        });
+    });
+    $('#bp_all_more').click(function () {
+        var curPage = parseInt($(this).attr('data-page')) + 1;
+        var cloneN = $(".aw-column-list-box").clone();
+        $('.aw-column-list-box').html('<p style="padding: 15px 0" align="center"><img src="' + G_STATIC_URL + '/css/default/img/loading_b.gif" alt="" /></p>');
+        $.get(G_BASE_URL + '/column/ajax/list/sort' + '-' + sort + '__page' + '-' + curPage, function (response)
+        {
+            if ($.trim(response) != '')
+            {
+                var lengt = response.match(re).length;
+
+                if(lengt < 12){
+                    $("#bp_all_more").attr('data-page',0);
+                }else{
+                    $("#bp_all_more").attr('data-page',curPage);
+                }
+                $('.aw-column-list-box').html(response);
+            }
+            else
+            {
+                $("#bp_all_more").attr('data-page',0);
+                $('.aw-column-list-box').html(cloneN);
+
+            }
+        });
+     });
+    $('#article_all_more').click(function()
+    {
+        var aPage = parseInt($(this).attr('data-page')) + 1;
+        var cloneA = $(".aw-column-article").clone();
+        $('.aw-column-article').html('<p style="padding: 15px 0" align="center"><img src="' + G_STATIC_URL + '/css/default/img/loading_b.gif" alt="" /></p>');
+        $.get(G_BASE_URL + '/column/ajax/article_list/page'+'-'+aPage, function (response)
+        {
+            if ($.trim(response) != '')
+            {
+                var lengt = response.match(re).length;
+                if(lengt < 12){
+                    $("#article_all_more").attr('data-page',0);
+                }else{
+                    $("#article_all_more").attr('data-page',aPage);
+                }
+                $('.aw-column-article').html(response);
+            } else
+            {
+                $("#article_all_more").attr('data-page',0);
+                $('.aw-column-article').html(cloneA);
+            }
+        });
+    })
+</script>
+<?php TPL::output('global/footer.tpl.htm'); ?>

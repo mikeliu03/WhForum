@@ -1,0 +1,69 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<div class="aw-top">
+    <div class="aw-top-divl">
+        <a href="javascript:;" onclick="window.history.back(-1);">
+            <img class="aw-top-back" src="<?php echo G_STATIC_URL;?>/h5/img/back.png">
+        </a>
+    </div>
+    <span class="aw-one-line"><?php _e('与'); ?> <?php echo $this->recipient_user['user_name']; ?> <?php _e('私信对话'); ?></span>
+    <div class="aw-top-div">
+        <a href="<?php echo base_url();?>"><i class="iconfont iconshouye" style="color: #999"></i></a>
+    </div>
+</div>
+<div class="aw-sxxq clearfix">
+    <?php if ($this->list) { ?>
+    <?php foreach($this->list AS $key => $val) { ?>
+    <?php if ($val['uid'] == $this->user_id) { ?>
+    <div class="aw-sxxq-time">
+        <span>
+            <?php echo date_friendly($val['add_time']); ?>
+            <?php if ($val['receipt'] AND $val['uid'] == $this->user_id) { ?>
+            (<?php _e('对方于 %s 已读', date_friendly($val['receipt'])); ?>)
+            <?php } ?>
+        </span>
+    </div>
+    <div class="aw-sxxq-dhr">
+        <a href="people/<?php if ($val['uid'] == $this->user_id) { ?><?php echo $this->user_info['uid']; ?><?php } else { ?><?php echo $val['uid']; ?><?php } ?>">
+            <img src="<?php echo get_avatar_url($val['uid'], 'mid'); ?>" alt="" class="aw-sxxq-dhl-tx"/>
+        </a>
+        <div class=" aw-sxxq-dhr-dh">
+            <img src="<?php echo G_STATIC_URL;?>/h5/img/dhr.png" alt="" />
+            <div>
+                <?php echo nl2br($val['message']); ?>
+            </div>
+        </div>
+    </div>
+    <?php }else{ ?>
+    <div class="aw-sxxq-time">
+        <span>
+            <?php echo date_friendly($val['add_time']); ?>
+            <?php if ($val['receipt'] AND $val['uid'] == $this->user_id) { ?>
+            (<?php _e('对方于 %s 已读', date_friendly($val['receipt'])); ?>)
+            <?php } ?>
+        </span>
+    </div>
+    <div class="aw-sxxq-dhl clearfix">
+        <a href="people/<?php if ($val['uid'] == $this->user_id) { ?><?php echo $this->user_info['uid']; ?><?php } else { ?><?php echo $val['uid']; ?><?php } ?>">
+            <img class="aw-sxxq-dhl-tx" src="<?php echo get_avatar_url($val['uid'], 'mid'); ?>" alt="">
+        </a>
+        <div class="aw-sxxq-dhl-dh clearfix">
+            <img src="<?php echo G_STATIC_URL;?>/h5/img/dhl.png" alt="">
+            <div style="float: left">
+                <?php echo nl2br($val['message']); ?>
+            </div>
+        </div>
+    </div>
+    <?php } ?>
+    <?php } ?>
+    <?php } ?>
+</div>
+<div class="aw-sendNews">
+    <form action="inbox/ajax/send/" method="post" id="recipient_form">
+        <input type="hidden" name="post_hash" value="<?php echo new_post_hash(); ?>" />
+        <input type="hidden" name="recipient" value="<?php echo $this->recipient_user['user_name']; ?>" />
+        <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>" />
+        <input type="text" name="message"  placeholder="私信内容">
+        <img src="<?php echo G_STATIC_URL;?>/h5/img/fs.png" onclick="AWS.ajax_post($('#recipient_form'));" alt="">
+    </form>
+</div>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

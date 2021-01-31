@@ -1,0 +1,262 @@
+<?php TPL::output('m/global/header.tpl.htm'); ?>
+<style>
+    .aw-p-fix{top:0}
+</style>
+<div class="aw-tzlb aw-padding aw-no-top" style="padding-bottom: 0">
+    <div class="aw-selectLabel-top  aw-line clearfix">
+        <form id="search_form" action="m/search/" method="post">
+            <div class="aw-selectLabel-tl">
+                <img src="<?php echo G_STATIC_URL;?>/h5/img/search.png">
+                <input class="aw-pl-ys" id="aw-search-query" name="q" placeholder="输入你要搜索的内容" value="<?php echo $this->keyword;?>" />
+            </div>
+            <a href="javascript:;" onClick="$('#search_form').submit();" class="aw-selectLabel-tr"><?php _e('搜索');?></a>
+        </form>
+    </div>
+
+    <div class="aw-search mt15" id="aw-search-logs" <?php if($this->keyword){ ?>style="display:none;"<?php } ?> >
+        <div class="aw-search-ip">
+            <div class="aw-search-list clearfiex" style="padding-bottom: 16px;">
+                <h3 style="margin-top: 16px;">最近热搜</h3>
+                    <?php foreach($this->hot_word_list as $v){ ?>
+                    <a href="m/search/q-<?php echo base64_encode($v);?>">
+                        <?php echo cjk_substr($v, 0, 9, 'utf-8', '...');?>
+                    </a>
+                    <?php } ?>
+            </div>
+            <div style="clear: both;"></div>
+        </div>
+    </div>
+
+    <!-- 检索 -->
+    <div class="aw-search" style="display:none;" id="aw-search-result">
+        <div class="nohistory" id="aw-search-box">
+            <p class="title" style="text-align: center;color: #ccc;font-size: 14px;"><?php _e('输入关键字进行搜索'); ?></p>
+            <ul id="search_result">
+            </ul>
+        </div>
+        
+        <a href="javascript:;" class="questions" id="now-publish">立即提问“<font></font>”</a>
+        
+    </div>
+    <input type="hidden" id="now-text" value="">
+    <!-- 检索结束 -->
+
+    <div class="aw-qa-tab aw-search-tab" <?php if(!$this->keyword){ ?>style="display: none;"<?php } ?> >
+        <ul>
+            <li class="cur" data-type="all"><a href="javascript:;"><?php _e('全部');?></a></li>
+            <li data-type="articles"><a href="javascript:;"><?php _e('文章');?></a></li>
+            <li data-type="questions"><a href="javascript:;"><?php _e('问题');?></a></li>
+            <li data-type="topics"><a href="javascript:;"><?php _e('话题');?></a></li>
+            <li data-type="users"><a href="javascript:;"><?php _e('用户');?></a></li>
+        </ul>
+    </div>
+    <div class="aw-qanda-list" id="ajaxList" <?php if(!$this->keyword){ ?>style="display: ;"<?php } ?> >
+    </div>
+</div>
+<script type="text/javascript">
+    var search_query ='<?php echo addslashes($this->keyword) ?  addslashes($this->keyword) : $_GET["q"] ; ?>';
+    var split_query = '<?php echo addslashes($this->split_keyword); ?>';
+    var keyword = search_query;
+    var url = G_BASE_URL + '/search/ajax/search_result/';
+    layui.use(['element', 'flow'], function () {
+        var element = layui.element;
+        var flow = layui.flow;
+        $('.aw-qa-tab li').click(function () {
+            $('.aw-qa-tab li').removeClass('cur');
+            $(this).addClass('cur');
+            var type = $(this).attr('data-type');
+            $('#ajaxList').empty();
+            flow.load({
+                elem: '#ajaxList', //指定列表容器
+                done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                    AWS.ajaxRequest(url, 'get', 'html', {page:page,search_type:type,q:keyword,is_recommend:0}, function (res) {
+                        next(res, page < $($(res)[0]).attr('data-total'));
+                        replaceHtml(search_query);
+                    });
+                }
+            });
+            element.init();
+        });
+    });
+
+   if(keyword) {
+       $(".aw-qa-tab").find('li').eq(0).click();
+   }
+
+    $(window).scroll(function()
+    {
+        if ($(document).scrollTop() >= 155) {
+            $("div.aw-qa-tab").addClass('aw-p-fix');
+        }
+        if ($(document).scrollTop() < 155) {
+            $("div.aw-qa-tab").removeClass('aw-p-fix');
+        }
+    });
+
+    function replaceHtml(q) {
+        $('.aw-title a').each(function () {
+            var text = $(this).html();
+            var str = highText(text,q, 'font', 'aw-text-color-red');
+            $(this).html(str);
+        });
+
+        $('.search-content').each(function () {
+            var text1 = $(this).html();
+            var str1 = highText(text1,q, 'font', 'aw-text-color-red');
+            $(this).html(str1);
+        })
+    }
+
+    function highText(str,searchWords, htmlTag, tagClass)
+    {
+        var pattarn = searchWords.replace(/\b(\w+)\b/g, "($1)").replace(/\s+/g, "|");
+        return str.replace(new RegExp(pattarn, "ig"), function (keyword)
+        {
+            return $("<" + htmlTag + " class=" + tagClass + ">" + keyword + "</" + htmlTag + ">").outerHTML();
+        });
+    }
+
+    $('#now-publish').click(function()
+    {
+        var text = $('#now-text').val();
+        if(text){
+            window.location.href=G_BASE_URL +'/m/publish/question_content\-'+base64Encode(text);
+        }
+    });
+
+    function base64Encode(input){
+        var rv;
+        rv = encodeURIComponent(input);
+        rv = unescape(rv);
+        rv = window.btoa(rv);
+        return rv;
+    }
+
+    var selector = '#aw-search-query';
+
+    $(selector).focus(function()
+    {
+        if ($(selector).val().length >= 1)
+        {
+            $('#aw-search-logs').hide();
+            $('#aw-search-result').show();
+            
+            get_dropdown_list($(this), $(selector).val());
+            $('#ajaxList').hide();
+            $('.aw-search-tab').hide();
+
+            if($(selector).val().length > 5)
+            {
+                $('#aw-search-result').find('font').html(($(selector).val()).substr(0,5)+'...');
+            }else{
+                $('#aw-search-result').find('font').html(($(selector).val()));
+            }
+
+            $('#now-text').val($(selector).val());
+        }else{
+            $('#aw-search-logs').show();
+            $('#aw-search-result').hide();
+        }
+    });
+
+    $(selector).bind('input propertychange',function(e)
+    {
+        if($(selector).val().length > 5)
+        {
+            $('#aw-search-result').find('font').html(($(selector).val()).substr(0,5)+'...');
+        }else{
+            $('#aw-search-result').find('font').html(($(selector).val()));
+        }
+
+        $('#now-text').val($(selector).val());
+
+        if ($(selector).val().length >= 1)
+        {
+            $('#aw-search-logs').hide();
+            $('#aw-search-result').show();
+            $('.search-top label').show();
+
+            get_dropdown_list($(this), $(selector).val());
+            
+        }
+        else
+        {
+            $('#aw-search-logs').show();
+            $('#aw-search-result').hide();
+            
+        }
+    });
+
+    $(selector).blur(function()
+    {
+        if(!$(selector).val())
+        {
+            $('#aw-search-logs').show();
+            $('#aw-search-result').hide();
+        }
+    });
+
+    function get_dropdown_list(selector, data)
+    {
+        if (AWS.G.dropdown_list_xhr != '')
+        {
+            AWS.G.dropdown_list_xhr.abort(); // 中止上一次ajax请求
+        }
+
+        var url = G_BASE_URL + '/search/ajax/search/?q=' + encodeURIComponent(data) + '&limit=10';
+        $('#search_result').html(''); // 清空内容
+
+        AWS.G.dropdown_list_xhr = $.get(url, function (result)
+        {
+            if (result.length != 0 && AWS.G.dropdown_list_xhr != undefined)
+            {
+                
+                $.each(result, function (i, a)
+                {
+                    switch (a.type)
+                    {
+                        case 'questions':
+                            if (a.detail.best_answer > 0)
+                            {
+                                var active = 'active';
+                            }
+                            else
+                            {
+                                var active = ''
+                            }
+                            $('#search_result').append('<li class="'+active+' question clearfix"><a href="'+a.url+'" >'+a.name+' </a><i >'+a.detail.answer_count+' 回答</i></li>');
+                        break;
+
+                        case 'topics':
+                            $('#search_result').append('<li class="topic clearfix"><a href="'+a.url+'" data-id="'+a.detail.topic_id+'" >'+a.name+'</a> <i>'+a.detail.discuss_count+' 讨论</i></li>');
+                        break;
+
+                        case 'users':
+                            if (a.detail.signature == '')
+                            {
+                                var signature = _t('暂无介绍');
+                            }
+                            else
+                            {
+                                var signature = a.detail.signature;
+                            }
+                            $('#search_result').append('<li class="user clearfix"><a href="'+a.url+'"><img src="'+a.detail.avatar_file+'" />'+a.name+'<span class="aw-hide-txt">'+signature+'</span></a></li>');
+                        break;
+                    }
+                });
+
+                $('#aw-search-result').show().children().show();
+                $('#aw-search-result').find('.title').hide();
+                $('#aw-search-logs').hide();
+                // 关键词高亮
+                $('#aw-search-result li.question a').highText(data, 'b', 'active');
+                
+            }else
+            {
+                $('#aw-search-result').find('.title').html(_t('暂无相关搜索结果...')).show();
+                $('#aw-search-logs').hide();
+            }
+        }, 'json');
+    }
+</script>
+<?php TPL::output('m/global/footer.tpl.htm'); ?>

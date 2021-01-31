@@ -1,0 +1,129 @@
+<?php TPL::output('global/header.tpl.htm'); ?>
+<style type="text/css">
+.channel-active{
+    color: #155faa !important;
+}
+.channel-list a{
+    color:#666;
+    margin-right: 10px;
+}
+</style>
+<div class="aw-container-wrap aw-work-wrap">
+    <?php TPL::output('block/content_nav_menu.tpl.htm'); ?>
+    <div class="container">
+        <div class="row">
+            <div class="aw-content-wrap clearfix">
+                <!-- 侧边栏 -->
+                <div class="col-sm-12 col-md-3 aw-side-bar hidden-xs hidden-sm">
+                    <div class="aw-mod side-nav">
+                        <h2><i class="icon icon-order"></i><?php _e('工单'); ?></h2>
+                        <ul>
+                            <?php if ($this->user_info['permission']['is_service']) { ?>
+                            <li>
+                                <a href="ticket/service-me__status-pending"><?php _e('我的待处理工单'); ?><span class="badge"><?php echo $this->my_pending_tickets; ?></span></a>
+                            </li>
+                            <?php } ?>
+                            <li>
+                                <a href="ticket/service-none__status-pending"><?php _e('未分配工单'); ?></a>
+                            </li>
+                            <li>
+                                <a href="ticket/status-pending"><?php _e('所有待处理工单'); ?></a>
+                            </li>
+                            <li>
+                                <a href="ticket/"><?php _e('所有工单'); ?></a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <?php if ($this->user_info['permission']['is_administortar']) { ?>
+                    <div class="aw-mod side-nav">
+                        <h2><i class="icon icon-count"></i><?php _e('统计分析'); ?></h2>
+                        <ul>
+                            <li>
+                                <a href="ticket/data/"><?php _e('综合数据表'); ?></a>
+                            </li>
+                            <li>
+                                <a href="ticket/work_data/" class="active"><?php _e('业绩报表'); ?></a>
+                            </li>
+                            <li>
+                                <a href="ticket/topic/"><?php _e('热门话题'); ?></a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="aw-mod side-nav">
+                        <h2><i class="icon icon-job"></i><?php _e('管理中心'); ?></h2>
+                        <ul>
+                            <li>
+                                <a href="ticket/channel/"><?php _e('渠道管理'); ?></a>
+                            </li>
+                            <li>
+                                <a href="admin/ticket/service_group_list/" target="_blank"><?php _e('客服组管理'); ?></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <?php } ?>
+                </div>
+                <!-- end 侧边栏 -->
+
+                <div class="col-sm-12 col-md-9 aw-main-content">
+                    <div class="aw-mod aw-work-list">
+                        <div class="mod-head">
+                            <h1>
+                                <i class="icon icon-count"></i> 业绩报表
+                            </h1>
+                        </div>
+						<form action="ticket/work_data/" method="post" id="select-gd">
+                            <div class="pull-right channel-list" style="margin-bottom: 10px;">
+                                <input type="hidden" name="action" value="search">
+                                <input type="text" name="start_time" id="start_time" readonly value="<?php echo $_GET['start_time'];?>">~
+                                <input type="text" name="end_time" id="end_time" readonly value="<?php echo $_GET['end_time'];?>">
+                                <botton onclick="$('#select-gd').attr('action','ticket/work_data/');AWS.ajax_post($('#select-gd'));" class="label label-primary">筛选</botton>
+                                <botton onclick="exports();" class="label label-primary">导出</botton>
+                            </div>
+                        </form>
+                        <div class="mod-body">
+                            <table class="table table-hover aw-table">
+                                <tr>
+                                    <th class="text-center">客服</th>
+                                    <th class="text-center"><?php _e('未处理'); ?></th>
+                                    <th class="text-center"><?php _e('已解决'); ?></th>
+                                    <th class="text-center"><?php _e('已关闭'); ?></th>
+                                </tr>
+                                <?php if ($this->tickets_list) {
+                                    foreach ($this->tickets_list AS $ticket_info) { ?>
+                                <tr>
+                                    <td class="text-center"><a href="ticket/work_detail/uid-<?php echo $ticket_info['uid']; ?>"><?php echo $ticket_info['user_name']; ?></a></td>
+                                    <td class="text-center"><?php echo $ticket_info['no_deal_num']; ?></td>
+                                    <td class="text-center"><?php echo $ticket_info['deal_num']; ?></td>
+                                    <td class="text-center"><?php echo $ticket_info['closed_num']; ?></td>
+                                </tr>
+                                <?php }
+                                } ?>
+                            </table>
+                        </div>
+
+                        <div class="mod-footer clearfix">
+                            <?php if ($this->pagination) echo $this->pagination; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php TPL::output('global/footer.tpl.htm'); ?>
+<script type="text/javascript">
+laydate.render({
+  elem: '#start_time'
+});
+laydate.render({
+  elem: '#end_time'
+});
+
+function exports(){
+    $('#select-gd').attr('action','ticket/work_data_export/');
+    AWS.ajax_post($('#select-gd'));
+}
+</script>
